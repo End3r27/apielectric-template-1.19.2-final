@@ -1,5 +1,6 @@
 package end3r.apielectric.registry;
 
+import end3r.apielectric.item.HoneyChargeItem;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -17,6 +18,8 @@ public class ModItems {
             "honey_power_consumer",
             new BlockItem(ModBlocks.HONEY_POWER_CONSUMER_BLOCK, new FabricItemSettings().group(APIELECTRIC_TAB))
     );
+
+    public static final Item HONEY_CHARGE_ITEM = registerItem("honey_charge_item", new HoneyChargeItem(1000, new Item.Settings()));
 
     // Registering method
     private static Item registerItem(String name, Item item) {

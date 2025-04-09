@@ -1,3 +1,4 @@
 {
-  "itemGroup.apielectric.main_tab": "ApiElectric"
+  "itemGroup.apielectric.main_tab": "ApiElectric",
+  "tooltip.apielectric.honey_charge": "HoneyCharge: %s"
 }
