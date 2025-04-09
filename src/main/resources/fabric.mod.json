@@ -19,7 +19,7 @@
 			"end3r.apielectric.ApiElectric"
 		],
 		"client": [
-			"end3r.apielectric.client.ModClientTickEvents"
+			"end3r.apielectric.ApiElectricClient"
 		],
 		"fabric-datagen": [
 			"end3r.apielectric.ApiElectricDataGenerator"
