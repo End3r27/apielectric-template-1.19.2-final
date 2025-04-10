@@ -34,10 +34,11 @@ public class ModBlockEntities {
             Registry.register(
                     Registry.BLOCK_ENTITY_TYPE,
                     new Identifier(ApiElectric.MOD_ID, "base_honey_charge_block"),
-                    BlockEntityType.Builder.create(() -> new BaseHoneyChargeBlockEntity(), ModBlocks.BASE_HONEY_CHARGE_BLOCK).build(null)
+                    BlockEntityType.Builder.create(BaseHoneyChargeBlockEntity::new, ModBlocks.BASE_HONEY_CHARGE_BLOCK).build(null)
             );
 
     public static void registerBlockEntities() {
-        // Block entities are registered when the BlockEntityType is registered in the above code.
+        // Method kept for explicit initialization if needed
+        ApiElectric.LOGGER.info("Registering Block Entities for " + ApiElectric.MOD_ID);
     }
 }

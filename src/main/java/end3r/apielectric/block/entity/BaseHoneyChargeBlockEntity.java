@@ -1,16 +1,27 @@
 package end3r.apielectric.block.entity;
 
-import end3r.apielectric.ApiElectric;
+import end3r.apielectric.registry.ModBlockEntities;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.util.math.BlockPos;
 
 public class BaseHoneyChargeBlockEntity extends BlockEntity {
 
     // Define your stored honey charge and maximum charge here
     private int storedHoneyCharge = 0;
-    private static final int MAX_HONEYCHARGE = 10000; // Set your max charge value here
+    private final int maxHoneyCharge;
 
-    public BaseHoneyChargeBlockEntity() {
-        super(ApiElectric.BASE_HONEY_CHARGE_BLOCK_ENTITY);
+    // Constructor that takes BlockEntityType, position, state, and max charge
+    public BaseHoneyChargeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state, int maxHoneyCharge) {
+        super(type, pos, state);
+        this.maxHoneyCharge = maxHoneyCharge;
+    }
+
+    // Constructor for the base block itself
+    public BaseHoneyChargeBlockEntity(BlockPos pos, BlockState state) {
+        // When used directly, use the ModBlockEntities.BASE_HONEY_CHARGE_BLOCK_ENTITY type
+        this(ModBlockEntities.BASE_HONEY_CHARGE_BLOCK_ENTITY, pos, state, 10000);
     }
 
     // Get the current stored honey charge
@@ -25,12 +36,12 @@ public class BaseHoneyChargeBlockEntity extends BlockEntity {
 
     // Get the maximum charge this block can hold
     public int getMaxCharge() {
-        return MAX_HONEYCHARGE;
+        return maxHoneyCharge;
     }
 
     // Add honey charge to the block entity, respecting the max charge
     public void addHoneyCharge(int amount) {
-        this.storedHoneyCharge = Math.min(storedHoneyCharge + amount, MAX_HONEYCHARGE);
+        this.storedHoneyCharge = Math.min(storedHoneyCharge + amount, maxHoneyCharge);
     }
 
     // Consume honey charge from the block entity
