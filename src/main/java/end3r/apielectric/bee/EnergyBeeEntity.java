@@ -43,9 +43,10 @@ public class EnergyBeeEntity extends BeeEntity {
         setStoredEnergy(this.storedEnergy + amount);
     }
 
-    public int getMaxEnergy() {
+    public int getMaxStoredEnergy() {
         return MAX_ENERGY;
     }
+
 
     // Set entity attributes (Health, Speed)
     public static DefaultAttributeContainer.Builder createEnergyBeeAttributes() {
@@ -60,6 +61,11 @@ public class EnergyBeeEntity extends BeeEntity {
         super.initGoals();
         // Add custom goal for charging from flowers or other behavior
         this.goalSelector.add(5, new EnergyBeeChargeFromFlowerGoal(this));
-    }
+        this.goalSelector.add(6, new end3r.apielectric.bee.GoToApiaryGoal(this));
+
+
+        }
 
 }
+
+

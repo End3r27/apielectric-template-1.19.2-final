@@ -32,6 +32,10 @@ public class ModItems {
                 .appendItems(stacks -> {
                     stacks.add(new ItemStack(HONEY_JAR));
                     stacks.add(new ItemStack(ENERGY_BEE_SPAWN_EGG));
+                    stacks.add(new ItemStack(ModBlocks.BASE_HONEY_CHARGE_BLOCK));
+                    stacks.add(new ItemStack(ModBlocks.COMB_CAPACITOR));
+                    stacks.add(new ItemStack(ModBlocks.ENERGY_APIARY));
+                    stacks.add(new ItemStack(ModBlocks.POLLEN_TRANSDUCER));
                     // Add more items here if needed
                 })
                 .build();

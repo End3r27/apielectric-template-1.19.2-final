@@ -1,5 +1,7 @@
 package end3r.apielectric.bee;
 
+import end3r.apielectric.registry.ModBlockTags;
+import end3r.apielectric.registry.ModBlocks;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.ai.goal.MoveToTargetPosGoal;
 import net.minecraft.util.math.BlockPos;
@@ -15,7 +17,7 @@ public class EnergyBeeChargeFromFlowerGoal extends MoveToTargetPosGoal {
 
     @Override
     protected boolean isTargetPos(WorldView world, BlockPos pos) {
-        return world.getBlockState(pos).isOf(Blocks.SUNFLOWER); // Or tag/custom flower later
+        return world.getBlockState(pos).isIn(ModBlockTags.ENERGIZED_FLOWERS); // Or tag/custom flower later
     }
 
     @Override
@@ -25,4 +27,5 @@ public class EnergyBeeChargeFromFlowerGoal extends MoveToTargetPosGoal {
             bee.addEnergy(5); // Slowly charge energy
         }
     }
+
 }
