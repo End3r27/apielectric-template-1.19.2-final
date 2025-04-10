@@ -29,17 +29,21 @@ public class TooltipBlockItem extends BlockItem {
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         if (Screen.hasShiftDown()) {
-            // Retrieve the BlockEntity's HoneyCharge directly from the NBT data on the ItemStack
+            // Retrieve the stored honey charge from the NBT data
             NbtCompound nbt = stack.getOrCreateNbt();
             int storedHoneyCharge = nbt.getInt("HoneyCharge");
-            int maxHoneyCharge = 10000; // This should match the maximum charge for your block
+            int maxHoneyCharge = 10000; // Replace with your actual max charge value
 
             int percent = (int) ((storedHoneyCharge / (float) maxHoneyCharge) * 100);
             Formatting color = percent > 66 ? Formatting.GREEN : percent > 33 ? Formatting.YELLOW : Formatting.RED;
 
-            tooltip.add(Text.literal("Stored HoneyCharge: " + storedHoneyCharge + " / " + maxHoneyCharge + " HC").formatted(color));
+            // Add the energy icon and stored charge in tooltip
+            tooltip.add(Text.literal("Energy: ").formatted(Formatting.GRAY)
+                    .append(Text.literal("HC").styled(style -> style.withColor(Formatting.YELLOW))));
+            tooltip.add(Text.literal("Stored HoneyCharge: " + storedHoneyCharge + " / " + maxHoneyCharge + " HC")
+                    .styled(style -> style.withColor(color)));
 
-            // Add a text-based progress bar (10 blocks wide)
+            // Display progress bar
             int bars = Math.round((percent / 10f));
             String bar = "█".repeat(bars) + "░".repeat(10 - bars);
             tooltip.add(Text.literal(bar).formatted(color));
@@ -47,6 +51,8 @@ public class TooltipBlockItem extends BlockItem {
             tooltip.add(Text.literal("Hold Shift for charge info").formatted(Formatting.GRAY));
         }
     }
+
+
 
 
 

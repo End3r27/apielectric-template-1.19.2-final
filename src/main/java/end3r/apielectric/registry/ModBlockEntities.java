@@ -1,6 +1,7 @@
 package end3r.apielectric.registry;
 
 import end3r.apielectric.ApiElectric;
+import end3r.apielectric.block.entity.BaseHoneyChargeBlockEntity;
 import end3r.apielectric.block.entity.CombCapacitorBlockEntity;
 import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
 import end3r.apielectric.block.entity.PollenTransducerBlockEntity;
@@ -28,6 +29,13 @@ public class ModBlockEntities {
             new Identifier(ApiElectric.MOD_ID, "pollen_transducer"),
             BlockEntityType.Builder.create(PollenTransducerBlockEntity::new, ModBlocks.POLLEN_TRANSDUCER).build(null)
     );
+
+    public static final BlockEntityType<BaseHoneyChargeBlockEntity> BASE_HONEY_CHARGE_BLOCK_ENTITY =
+            Registry.register(
+                    Registry.BLOCK_ENTITY_TYPE,
+                    new Identifier(ApiElectric.MOD_ID, "base_honey_charge_block"),
+                    BlockEntityType.Builder.create(() -> new BaseHoneyChargeBlockEntity(), ModBlocks.BASE_HONEY_CHARGE_BLOCK).build(null)
+            );
 
     public static void registerBlockEntities() {
         // Block entities are registered when the BlockEntityType is registered in the above code.
