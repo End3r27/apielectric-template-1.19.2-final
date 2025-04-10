@@ -1,26 +1,14 @@
 package end3r.apielectric.block.entity;
 
 import end3r.apielectric.registry.ModBlockEntities;
-import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 
-public class PollenTransducerBlockEntity extends BlockEntity {
+public class PollenTransducerBlockEntity extends BaseHoneyChargeBlockEntity {
 
-    // Define any properties you need
-    private int storedPollenEnergy;
+    public static final int MAX_HONEYCHARGE = 5000;
 
-    // Constructor that includes BlockPos and BlockState
     public PollenTransducerBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.POLLEN_TRANS_ENTITY, pos, state); // Pass BlockPos and BlockState to super constructor
-    }
-
-    // Add any additional methods for functionality
-    public void addPollenEnergy(int amount) {
-        this.storedPollenEnergy += amount;
-    }
-
-    public int getStoredPollenEnergy() {
-        return this.storedPollenEnergy;
+        super(ModBlockEntities.POLLEN_TRANS_ENTITY, pos, state, MAX_HONEYCHARGE);
     }
 }
