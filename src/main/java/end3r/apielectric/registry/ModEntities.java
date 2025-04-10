@@ -1,9 +1,11 @@
 package end3r.apielectric.registry;
 
 import end3r.apielectric.bee.EnergyBeeEntity;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.minecraft.entity.EntityDimensions;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -20,6 +22,12 @@ public class ModEntities {
     );
 
     public static void register() {
-        // This method should be called in your main mod initializer (onInitialize).
+        // Register the default attributes for the EnergyBeeEntity
+        registerEntityAttributes();
+    }
+
+    // Method to register the entity's attributes
+    public static void registerEntityAttributes() {
+        FabricDefaultAttributeRegistry.register(ENERGY_BEE, EnergyBeeEntity.createEnergyBeeAttributes());
     }
 }
