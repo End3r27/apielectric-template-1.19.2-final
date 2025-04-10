@@ -1,7 +1,5 @@
 package end3r.apielectric.bee;
 
-import end3r.apielectric.bee.EnergyBeeEntity;
-import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
 import end3r.apielectric.registry.ModBlocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -34,7 +32,7 @@ public class GoToApiaryGoal extends Goal {
         BlockPos beePos = bee.getBlockPos();
 
         // Search for nearby EnergyApiaryBlocks within a radius
-        int radius = 10;
+        int radius = 30;
         for (BlockPos pos : BlockPos.iterateOutwards(beePos, radius, radius / 2, radius)) {
             Block block = world.getBlockState(pos).getBlock();
             if (block == ModBlocks.ENERGY_APIARY) {
