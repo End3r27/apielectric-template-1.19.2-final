@@ -7,6 +7,8 @@
   "item.apielectric.comb_capacitor": "Comb Capacitor",
   "item.apielectric.pollen_transducer": "Pollen Transducer",
 
+  "itemGroup.apielectric.group": "ApiElectric",
+
   "entity.apielectric.energy_bee": "Energy Bee",
 
   "tooltip.apielectric.energy_apiary": "Generates HoneyCharge from bees.",

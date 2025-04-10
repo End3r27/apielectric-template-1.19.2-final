@@ -5,14 +5,13 @@ public class ModRegistry {
 
     public static void registerAll() {
         ModBlocks.registerBlocks();
-        ModEntities.registerEntities();
+        ModEntities.register();
         ModItems.registerItems();
         ModBlockEntities.registerBlockEntities();
     }
     
     public static void registerClient() {
         // Client-specific registrations
-        ModelBees modelBees = new ModelBees();
-        modelBees.onInitializeClient();
+
     }
 }

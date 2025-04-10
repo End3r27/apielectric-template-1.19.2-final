@@ -30,20 +30,20 @@ public class ModBlocks {
         // Register block items (used in inventory)
         Registry.register(Registry.ITEM,
                 new Identifier(ApiElectric.MOD_ID, "energy_apiary"),
-                new TooltipBlockItem(ENERGY_APIARY, "tooltip.apielectric.energy_apiary", new Item.Settings()));
+                new TooltipBlockItem(ENERGY_APIARY, "tooltip.apielectric.energy_apiary", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
 
         Registry.register(Registry.ITEM,
                 new Identifier(ApiElectric.MOD_ID, "comb_capacitor"),
-                new TooltipBlockItem(COMB_CAPACITOR, "tooltip.apielectric.comb_capacitor", new Item.Settings()));
+                new TooltipBlockItem(COMB_CAPACITOR, "tooltip.apielectric.comb_capacitor", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
 
         Registry.register(Registry.ITEM,
                 new Identifier(ApiElectric.MOD_ID, "pollen_transducer"),
-                new TooltipBlockItem(POLLEN_TRANSDUCER, "tooltip.apielectric.pollen_transducer", new Item.Settings()));
+                new TooltipBlockItem(POLLEN_TRANSDUCER, "tooltip.apielectric.pollen_transducer", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
 
         // Use TooltipBlockItem for the Base Honey Charge Block as well
         Registry.register(Registry.ITEM,
                 new Identifier(ApiElectric.MOD_ID, "base_honey_charge_block"),
-                new TooltipBlockItem(BASE_HONEY_CHARGE_BLOCK, "tooltip.apielectric.base_honey_charge_block", new Item.Settings()));
+                new TooltipBlockItem(BASE_HONEY_CHARGE_BLOCK, "tooltip.apielectric.base_honey_charge_block", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
     }
 }
 
