@@ -4,8 +4,10 @@ import end3r.apielectric.ApiElectric;
 import end3r.apielectric.block.CombCapacitorBlock;
 import end3r.apielectric.block.EnergyApiaryBlock;
 import end3r.apielectric.block.PollenTransducerBlock;
+import end3r.apielectric.item.TooltipBlockItem;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -23,8 +25,17 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "pollen_transducer"), POLLEN_TRANSDUCER);
 
         // Register block items (used in inventory)
-        Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "energy_apiary"), new BlockItem(ENERGY_APIARY, new net.minecraft.item.Item.Settings()));
-        Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "comb_capacitor"), new BlockItem(COMB_CAPACITOR, new net.minecraft.item.Item.Settings()));
-        Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "pollen_transducer"), new BlockItem(POLLEN_TRANSDUCER, new net.minecraft.item.Item.Settings()));
+
+        Registry.register(Registry.ITEM,
+                new Identifier(ApiElectric.MOD_ID, "energy_apiary"),
+                new TooltipBlockItem(ENERGY_APIARY, "tooltip.apielectric.energy_apiary", new Item.Settings()));
+
+        Registry.register(Registry.ITEM,
+                new Identifier(ApiElectric.MOD_ID, "comb_capacitor"),
+                new TooltipBlockItem(COMB_CAPACITOR, "tooltip.apielectric.comb_capacitor", new Item.Settings()));
+
+        Registry.register(Registry.ITEM,
+                new Identifier(ApiElectric.MOD_ID, "pollen_transducer"),
+                new TooltipBlockItem(POLLEN_TRANSDUCER, "tooltip.apielectric.pollen_transducer", new Item.Settings()));
     }
 }

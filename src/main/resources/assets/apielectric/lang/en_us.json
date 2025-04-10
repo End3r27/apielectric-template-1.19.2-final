@@ -1,0 +1,23 @@
+{
+  "block.apielectric.energy_apiary": "Energy Apiary",
+  "block.apielectric.comb_capacitor": "Comb Capacitor",
+  "block.apielectric.pollen_transducer": "Pollen Transducer",
+
+  "item.apielectric.energy_apiary": "Energy Apiary",
+  "item.apielectric.comb_capacitor": "Comb Capacitor",
+  "item.apielectric.pollen_transducer": "Pollen Transducer",
+
+  "entity.apielectric.energy_bee": "Energy Bee",
+
+  "tooltip.apielectric.energy_apiary": "Generates HoneyCharge from bees.",
+  "tooltip.apielectric.energy_apiary.advanced": "Accepts Energy Bees only. Produces 10 HCU/tick.",
+
+  "tooltip.apielectric.comb_capacitor": "Stores large amounts of HoneyCharge.",
+  "tooltip.apielectric.comb_capacitor.advanced": "Max Capacity: 40,000 HCU. Transfers via Nectar Tubes.",
+
+  "tooltip.apielectric.pollen_transducer": "Converts HoneyCharge into other modded energy.",
+  "tooltip.apielectric.pollen_transducer.advanced": "Compatible with FE, RF, and AE2."
+
+
+}
+
