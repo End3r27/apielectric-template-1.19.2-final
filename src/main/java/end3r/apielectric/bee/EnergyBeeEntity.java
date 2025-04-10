@@ -1,13 +1,12 @@
 package end3r.apielectric.bee;
 
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.passive.BeeEntity;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.world.World;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.server.world.ServerWorld;
 
 public class EnergyBeeEntity extends BeeEntity {
 
@@ -18,6 +17,7 @@ public class EnergyBeeEntity extends BeeEntity {
         super(entityType, world);
     }
 
+    // Override to handle custom data
     @Override
     public void writeCustomDataToNbt(NbtCompound nbt) {
         super.writeCustomDataToNbt(nbt);
@@ -30,6 +30,7 @@ public class EnergyBeeEntity extends BeeEntity {
         storedEnergy = nbt.getInt("StoredEnergy");
     }
 
+    // Getter and Setter for Energy
     public int getStoredEnergy() {
         return storedEnergy;
     }
@@ -45,14 +46,20 @@ public class EnergyBeeEntity extends BeeEntity {
     public int getMaxEnergy() {
         return MAX_ENERGY;
     }
+
+    // Set entity attributes (Health, Speed)
+    public static DefaultAttributeContainer.Builder createEnergyBeeAttributes() {
+        return BeeEntity.createBeeAttributes()
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 20.0) // Health
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25); // Movement speed
+    }
+
+    // Initialize goals, including the energy charging goal
     @Override
     protected void initGoals() {
         super.initGoals();
-
-        // Example: prioritize nearby flowers
+        // Add custom goal for charging from flowers or other behavior
         this.goalSelector.add(5, new EnergyBeeChargeFromFlowerGoal(this));
-
-        // You can replace vanilla goals later if needed
     }
 
 }

@@ -12,21 +12,29 @@ import net.minecraft.util.registry.Registry;
 public class ModItems {
 
     // Declare custom items
-    public static final Item HONEY_JAR = new Item(new Item.Settings().group(ModItems.APIELECTRIC_GROUP));
+    public static final Item HONEY_JAR = new Item(new Item.Settings());
     public static final Item ENERGY_BEE_SPAWN_EGG = new SpawnEggItem(
             ModEntities.ENERGY_BEE, 0xfcd734, 0x463b1e,
-            new Item.Settings().group(ModItems.APIELECTRIC_GROUP));
+            new Item.Settings());
 
-    // 🟡 Custom Creative Tab
-    public static final ItemGroup APIELECTRIC_GROUP = FabricItemGroupBuilder.create(
-                    new Identifier("apielectric", "group"))
-            .icon(() -> new ItemStack(ModItems.ENERGY_BEE_SPAWN_EGG))
-            .build();
-
-
+    // 🟡 Custom Creative Tab (Move this after the items are registered)
+    public static ItemGroup APIELECTRIC_GROUP;
 
     public static void registerItems() {
         // Register items
         Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "honey_jar"), HONEY_JAR);
+        Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "energy_bee_spawn_egg"), ENERGY_BEE_SPAWN_EGG);
+
+        // 🟡 Now initialize the creative tab after registration
+        APIELECTRIC_GROUP = FabricItemGroupBuilder.create(
+                        new Identifier("apielectric", "group"))
+                .icon(() -> new ItemStack(ENERGY_BEE_SPAWN_EGG))
+                .appendItems(stacks -> {
+                    stacks.add(new ItemStack(HONEY_JAR));
+                    stacks.add(new ItemStack(ENERGY_BEE_SPAWN_EGG));
+                    // Add more items here if needed
+                })
+                .build();
     }
+
 }
