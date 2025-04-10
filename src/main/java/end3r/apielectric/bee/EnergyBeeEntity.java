@@ -11,7 +11,7 @@ import net.minecraft.nbt.NbtCompound;
 public class EnergyBeeEntity extends BeeEntity {
 
     private int storedEnergy = 0;
-    private static final int MAX_ENERGY = 1000;
+    private static final int MAX_ENERGY = 100;
 
     public EnergyBeeEntity(EntityType<? extends BeeEntity> entityType, World world) {
         super(entityType, world);

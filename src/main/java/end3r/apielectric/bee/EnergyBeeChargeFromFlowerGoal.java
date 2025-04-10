@@ -24,7 +24,7 @@ public class EnergyBeeChargeFromFlowerGoal extends MoveToTargetPosGoal {
     public void tick() {
         super.tick();
         if (hasReached()) {
-            bee.addEnergy(5); // Slowly charge energy
+            bee.addEnergy(100); // Slowly charge energy
         }
     }
 

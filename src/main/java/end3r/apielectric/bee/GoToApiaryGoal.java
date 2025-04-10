@@ -22,8 +22,8 @@ public class GoToApiaryGoal extends Goal {
 
     @Override
     public boolean canStart() {
-        // Only run if bee is fully charged
-        return bee.getStoredEnergy() >= bee.getMaxStoredEnergy();
+        // Only run if bee is fully charged or close to fully charged
+        return bee.getStoredEnergy() >= bee.getMaxStoredEnergy() * 0.95; // Start when at least 95% full
     }
 
     @Override
