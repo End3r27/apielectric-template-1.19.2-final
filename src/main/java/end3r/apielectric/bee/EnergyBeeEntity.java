@@ -1,8 +1,9 @@
 package end3r.apielectric.bee;
 
 import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
-import net.minecraft.block.BlockState;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -12,6 +13,16 @@ public class EnergyBeeEntity extends MobEntity {
 
     public EnergyBeeEntity(EntityType<? extends MobEntity> type, World world) {
         super(type, world);
+    }
+
+    // THIS IS THE IMPORTANT PART - Add this static method to register attributes
+    public static DefaultAttributeContainer.Builder createEnergyBeeAttributes() {
+        return MobEntity.createMobAttributes()
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 10.0)
+                .add(EntityAttributes.GENERIC_FLYING_SPEED, 0.6)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.3)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 2.0)
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 48.0);
     }
 
     @Override
@@ -25,12 +36,6 @@ public class EnergyBeeEntity extends MobEntity {
 
     // Method to check if the bee is near an EnergyApiaryBlockEntity
     private boolean isNearEnergyApiary() {
-        // This is a placeholder. In an actual implementation, you would:
-        // 1. Get blocks in a radius around the bee
-        // 2. Check if any of them are energy apiaries
-        // 3. Return true if found, false otherwise
-
-        // For example (simplified):
         BlockPos beePos = this.getBlockPos();
         for (int x = -3; x <= 3; x++) {
             for (int y = -3; y <= 3; y++) {
@@ -56,11 +61,6 @@ public class EnergyBeeEntity extends MobEntity {
 
     // Get the nearby apiary block entity
     private EnergyApiaryBlockEntity getNearbyEnergyApiary() {
-        // This is a placeholder. In an actual implementation, you would:
-        // 1. Get blocks in a radius around the bee
-        // 2. Find the first energy apiary block entity
-        // 3. Return it, or null if none found
-
         BlockPos beePos = this.getBlockPos();
         for (int x = -3; x <= 3; x++) {
             for (int y = -3; y <= 3; y++) {

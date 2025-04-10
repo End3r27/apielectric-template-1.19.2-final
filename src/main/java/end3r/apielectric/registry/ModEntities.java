@@ -2,6 +2,7 @@ package end3r.apielectric.registry;
 
 import end3r.apielectric.ApiElectric;
 import end3r.apielectric.bee.EnergyBeeEntity;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
@@ -20,6 +21,9 @@ public class ModEntities {
     );
 
     public static void registerEntities() {
-        // The entity is already registered during the FabricEntityTypeBuilder creation
+        // Register entity attributes
+        FabricDefaultAttributeRegistry.register(ENERGY_BEE, EnergyBeeEntity.createEnergyBeeAttributes());
+
+        ApiElectric.LOGGER.info("Registered entity attributes for " + ApiElectric.MOD_ID);
     }
 }
