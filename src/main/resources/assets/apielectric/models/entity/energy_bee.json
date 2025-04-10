@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "apielectric:textures/entity/energy_bee.png"
+  }
+}

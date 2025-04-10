@@ -2,16 +2,23 @@ package end3r.apielectric.bee;
 
 import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.FlyGoal;
+import net.minecraft.entity.ai.goal.LookAroundGoal;
+import net.minecraft.entity.ai.goal.LookAtEntityGoal;
+import net.minecraft.entity.ai.goal.WanderAroundGoal;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.PathAwareEntity; // Import PathAwareEntity
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class EnergyBeeEntity extends MobEntity {
+public class EnergyBeeEntity extends PathAwareEntity { // Now extends PathAwareEntity
     private int honeyChargeGenerated = 100; // How much charge this bee generates per tick or interval
 
-    public EnergyBeeEntity(EntityType<? extends MobEntity> type, World world) {
+    // Constructor fixed
+    public EnergyBeeEntity(EntityType<EnergyBeeEntity> type, World world) {
         super(type, world);
     }
 
@@ -73,5 +80,16 @@ public class EnergyBeeEntity extends MobEntity {
             }
         }
         return null;
+    }
+
+    @Override
+    protected void initGoals() {
+        // Remove SwimGoal as it's not necessary for a flying bee
+        this.goalSelector.add(1, new WanderAroundGoal(this, 1.0));  // Now works since PathAwareEntity is extended
+        this.goalSelector.add(2, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
+        this.goalSelector.add(3, new LookAroundGoal(this));
+
+        // If you want the bee to fly
+        this.goalSelector.add(4, new FlyGoal(this, 1.2)); // This will now work
     }
 }

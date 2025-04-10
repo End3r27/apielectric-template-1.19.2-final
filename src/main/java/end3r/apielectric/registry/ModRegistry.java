@@ -9,4 +9,10 @@ public class ModRegistry {
         ModItems.registerItems();
         ModBlockEntities.registerBlockEntities();
     }
+    
+    public static void registerClient() {
+        // Client-specific registrations
+        ModelBees modelBees = new ModelBees();
+        modelBees.onInitializeClient();
+    }
 }
