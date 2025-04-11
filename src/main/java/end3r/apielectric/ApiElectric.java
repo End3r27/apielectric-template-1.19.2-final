@@ -18,7 +18,10 @@ public class ApiElectric implements ModInitializer {
 		ModRegistry.registerAll();
 
 		LOGGER.info("Hello from ApiElectric!");
+
+
 	}
 	public static final BlockEntityType<BaseHoneyChargeBlockEntity> BASE_HONEY_CHARGE_BLOCK_ENTITY =
 			ModBlockEntities.BASE_HONEY_CHARGE_BLOCK_ENTITY;
 }
+

@@ -46,17 +46,17 @@ public class EnergyBeeModel extends EntityModel<EnergyBeeEntity> {
                         .cuboid(-3.5F, -4.0F, -5.0F, 7.0F, 7.0F, 10.0F),
                 ModelTransform.pivot(0.0F, 19.0F, 0.0F));
 
-        // Wings - these are separate parts now
+        // Wings - FIX: Make wings larger and more visible with proper UV mapping
         root.addChild("right_wing",
                 ModelPartBuilder.create()
-                        .uv(9, 18)
-                        .cuboid(-9.0F, 0.0F, 0.0F, 9.0F, 0.0F, 6.0F),
+                        .uv(0, 18) // Changed UV mapping from 9,18 to 0,18
+                        .cuboid(-9.0F, 0.0F, 0.0F, 9.0F, 1.0F, 6.0F), // Added height of 1.0F instead of 0.0F
                 ModelTransform.pivot(-1.5F, 15.0F, -3.0F));
 
         root.addChild("left_wing",
                 ModelPartBuilder.create()
-                        .uv(9, 18).mirrored()
-                        .cuboid(0.0F, 0.0F, 0.0F, 9.0F, 0.0F, 6.0F),
+                        .uv(0, 18).mirrored() // Changed UV mapping from 9,18 to 0,18
+                        .cuboid(0.0F, 0.0F, 0.0F, 9.0F, 1.0F, 6.0F), // Added height of 1.0F instead of 0.0F
                 ModelTransform.pivot(1.5F, 15.0F, -3.0F));
 
         // Legs
@@ -101,24 +101,37 @@ public class EnergyBeeModel extends EntityModel<EnergyBeeEntity> {
         return TexturedModelData.of(modelData, 64, 64);
     }
 
+    // 4. Enhance wing animation in EnergyBeeModel.setAngles
     @Override
     public void setAngles(EnergyBeeEntity energyBee, float limbAngle, float limbDistance,
                           float animationProgress, float headYaw, float headPitch) {
         // Wing flapping animation
         float wingAngle = 0.0F;
         if (energyBee.isInAir()) {
-            // Fast flapping when flying
-            wingAngle = MathHelper.cos(animationProgress * 2.0F) * 0.9F;
+            // Fast flapping when flying - INCREASED AMPLITUDE AND SPEED
+            wingAngle = MathHelper.cos(animationProgress * 3.0F) * 1.2F;
         } else {
             // Slow occasional flapping when grounded
             wingAngle = MathHelper.cos(animationProgress * 0.3F) * 0.2F;
         }
 
+        // Apply more dramatic wing rotation
         this.rightWing.roll = wingAngle;
         this.leftWing.roll = -wingAngle;
 
+        // Also add a slight up-down movement to wings
+        this.rightWing.pitch = MathHelper.cos(animationProgress * 2.5F) * 0.1F;
+        this.leftWing.pitch = MathHelper.cos(animationProgress * 2.5F) * 0.1F;
+
         // Adjust body rotation based on pitch for flying
         this.body.pitch = headPitch * 0.017453292F;
+
+        // Apply roll when flying
+        if (energyBee.isInAir()) {
+            this.body.roll = energyBee.getRollAmount(limbDistance) * 0.3F;
+        } else {
+            this.body.roll = 0;
+        }
 
         // Antenna bobbing
         float antennaBob = MathHelper.cos(animationProgress * 0.5F) * 0.1F;

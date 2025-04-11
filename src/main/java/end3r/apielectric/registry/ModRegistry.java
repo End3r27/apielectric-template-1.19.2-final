@@ -7,8 +7,7 @@ public class ModRegistry {
         ModEntities.register();
         ModItems.registerItems();
         ModBlockEntities.registerBlockEntities();
-        // Remove this call:
-        // ModEntityRenderers.registerEntityRenderers();
+        ModBlockTags.register();
     }
 
     public static void registerClient() {

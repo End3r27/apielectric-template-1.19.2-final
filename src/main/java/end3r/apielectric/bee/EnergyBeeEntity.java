@@ -121,17 +121,27 @@ public class EnergyBeeEntity extends PathAwareEntity implements Flutterer {
     @Override
     public void travel(Vec3d movementInput) {
         // If the bee is a flier and not on the ground, use flying movement
-        if (this.isLogicalSideForUpdatingMovement() && !this.onGround) {
-            this.updateVelocity(0.1F, movementInput);
-            this.move(MovementType.SELF, this.getVelocity());
+        if (this.isLogicalSideForUpdatingMovement()) {
+            if (!this.onGround) {
+                // Apply stronger upward force to keep bee flying
+                this.updateVelocity(0.1F, movementInput);
+                this.move(MovementType.SELF, this.getVelocity());
 
-            // Apply some drag/friction
-            this.setVelocity(this.getVelocity().multiply(0.91f));
+                // Apply moderate drag/friction (reduced from 0.91f)
+                this.setVelocity(this.getVelocity().multiply(0.95f));
 
-            // Apply slight upward momentum to counteract gravity
-            if (!this.hasNoGravity() && this.timeInAir > 10) {
+                // Apply constant upward momentum to better counteract gravity
                 Vec3d vec3d = this.getVelocity();
-                this.setVelocity(vec3d.x, Math.max(vec3d.y, -0.05), vec3d.z);
+                // Apply stronger upward force especially if falling
+                double upwardForce = vec3d.y < 0 ? 0.08 : 0.04;
+                this.setVelocity(vec3d.x, Math.max(vec3d.y + upwardForce, -0.1), vec3d.z);
+
+                // Keep trying to move upward until reaching a certain height
+                if (this.getBlockPos().getY() < this.getWorld().getTopY() - 10 && timeInAir > 5) {
+                    this.setVelocity(this.getVelocity().add(0, 0.03, 0));
+                }
+            } else {
+                super.travel(movementInput);
             }
         } else {
             super.travel(movementInput);
@@ -147,5 +157,6 @@ public class EnergyBeeEntity extends PathAwareEntity implements Flutterer {
     public float getRollAmount(float tickDelta) {
         return this.rollAmountO + (this.rollAmount - this.rollAmountO) * tickDelta;
     }
+
 }
 

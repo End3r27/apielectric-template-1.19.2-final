@@ -19,5 +19,7 @@ public class ApiElectricClient implements ClientModInitializer {
 
         // Register the renderer for the EnergyBeeEntity
         EntityRendererRegistry.register(ModEntities.ENERGY_BEE, EnergyBeeEntityRenderer::new);
+
+
     }
 }
