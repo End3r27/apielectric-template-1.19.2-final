@@ -91,7 +91,7 @@ public class EnergyBeeEntity extends PathAwareEntity implements Flutterer {
 
     @Override
     public boolean isInAir() {
-        return false;
+        return true;
     }
 }
 
