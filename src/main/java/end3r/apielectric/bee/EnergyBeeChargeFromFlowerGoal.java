@@ -2,6 +2,7 @@ package end3r.apielectric.bee;
 
 import end3r.apielectric.ApiElectric;
 import end3r.apielectric.registry.ModBlockTags;
+import end3r.apielectric.registry.ModBlocks;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.particle.ParticleTypes;
@@ -119,10 +120,11 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
         }
 
         // Check if the block is still a valid flower
-        if (!bee.getWorld().getBlockState(targetFlowerPos).isIn(ModBlockTags.ENERGIZED_FLOWERS)) {
+        if (!bee.getWorld().getBlockState(targetFlowerPos).isOf(ModBlocks.ENERGIZED_FLOWER)) {
             hasTarget = false;
             return false;
         }
+
 
         return true;
     }

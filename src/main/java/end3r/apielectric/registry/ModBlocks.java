@@ -1,12 +1,11 @@
 package end3r.apielectric.registry;
 
 import end3r.apielectric.ApiElectric;
-import end3r.apielectric.block.BaseHoneyChargeBlock;
-import end3r.apielectric.block.CombCapacitorBlock;
-import end3r.apielectric.block.EnergyApiaryBlock;
-import end3r.apielectric.block.PollenTransducerBlock;
+import end3r.apielectric.block.*;
 import end3r.apielectric.item.TooltipBlockItem;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
@@ -19,6 +18,8 @@ public class ModBlocks {
     public static final Block COMB_CAPACITOR = new CombCapacitorBlock(Block.Settings.of(net.minecraft.block.Material.METAL));
     public static final Block POLLEN_TRANSDUCER = new PollenTransducerBlock(Block.Settings.of(net.minecraft.block.Material.STONE));
     public static final Block BASE_HONEY_CHARGE_BLOCK = new BaseHoneyChargeBlock(Block.Settings.of(net.minecraft.block.Material.WOOD));
+    public static final Block ENERGIZED_FLOWER = new EnergizedFlowerBlock(FabricBlockSettings.copyOf(Blocks.DANDELION).nonOpaque().luminance(state -> 7)); // optional: emits light
+
 
     public static void registerBlocks() {
         // Register blocks
@@ -26,6 +27,8 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "comb_capacitor"), COMB_CAPACITOR);
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "pollen_transducer"), POLLEN_TRANSDUCER);
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "base_honey_charge_block"), BASE_HONEY_CHARGE_BLOCK);
+        Registry.register(Registry.BLOCK, new Identifier("apielectric", "energized_flower"), ENERGIZED_FLOWER);
+
 
         // Register block items (used in inventory)
         Registry.register(Registry.ITEM,
@@ -44,6 +47,12 @@ public class ModBlocks {
         Registry.register(Registry.ITEM,
                 new Identifier(ApiElectric.MOD_ID, "base_honey_charge_block"),
                 new TooltipBlockItem(BASE_HONEY_CHARGE_BLOCK, "tooltip.apielectric.base_honey_charge_block", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
+
+        Registry.register(Registry.ITEM,
+                new Identifier(ApiElectric.MOD_ID, "energized_flower"),
+                new BlockItem(ENERGIZED_FLOWER, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
+
+
     }
 }
 

@@ -2,10 +2,7 @@ package end3r.apielectric.registry;
 
 import end3r.apielectric.ApiElectric;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.SpawnEggItem;
+import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -16,7 +13,6 @@ public class ModItems {
     public static final Item ENERGY_BEE_SPAWN_EGG = new SpawnEggItem(
             ModEntities.ENERGY_BEE, 0xfcd734, 0x463b1e,
             new Item.Settings());
-
     // 🟡 Custom Creative Tab (Move this after the items are registered)
     public static ItemGroup APIELECTRIC_GROUP;
 
@@ -35,6 +31,7 @@ public class ModItems {
                     stacks.add(new ItemStack(ModBlocks.COMB_CAPACITOR));
                     stacks.add(new ItemStack(ModBlocks.ENERGY_APIARY));
                     stacks.add(new ItemStack(ModBlocks.POLLEN_TRANSDUCER));
+                    stacks.add(new ItemStack(ModBlocks.ENERGIZED_FLOWER));
                 })
                 .build();
     }

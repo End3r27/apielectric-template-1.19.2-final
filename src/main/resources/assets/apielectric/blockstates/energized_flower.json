@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "apielectric:block/energized_flower" }
+  }
+}
