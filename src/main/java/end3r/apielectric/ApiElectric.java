@@ -1,6 +1,5 @@
 package end3r.apielectric;
 
-import end3r.apielectric.block.NectarTubeBlock;
 import end3r.apielectric.registry.ModBlocks;
 import end3r.apielectric.registry.ModRegistry;
 import net.fabricmc.api.ModInitializer;
@@ -18,14 +17,11 @@ public class ApiElectric implements ModInitializer {
 		// Register blocks and other mod components
 		ModRegistry.registerAll();
 
-		// Register Nectar Tube Block model and texture rendering
-		registerModels();
+
 
 		// Print initialization log message
 		LOGGER.info("ApiElectric mod initialized!");
 	}
-
-	private void registerModels() {
-		// Corrected: passing the NectarTubeBlock class reference and RenderLayer
-		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.NCTR_TUBE, RenderLayer.getTranslucent());	}
 }
+
+

@@ -19,7 +19,7 @@ public class ModBlocks {
     public static final Block POLLEN_TRANSDUCER = new PollenTransducerBlock(Block.Settings.of(net.minecraft.block.Material.STONE));
     public static final Block BASE_HONEY_CHARGE_BLOCK = new BaseHoneyChargeBlock(Block.Settings.of(net.minecraft.block.Material.WOOD));
     public static final Block ENERGIZED_FLOWER = new EnergizedFlowerBlock(FabricBlockSettings.copyOf(Blocks.DANDELION).nonOpaque().luminance(state -> 7)); // optional: emits light
-    public static final Block NCTR_TUBE = new NectarTubeBlock();
+
 
 
     public static void registerBlocks() {
@@ -29,7 +29,6 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "pollen_transducer"), POLLEN_TRANSDUCER);
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "base_honey_charge_block"), BASE_HONEY_CHARGE_BLOCK);
         Registry.register(Registry.BLOCK, new Identifier("apielectric", "energized_flower"), ENERGIZED_FLOWER);
-        Registry.register(Registry.BLOCK, new Identifier("apielectric", "nectar_tube"), NCTR_TUBE);
 
 
         // Register block items (used in inventory)
@@ -54,9 +53,6 @@ public class ModBlocks {
                 new Identifier(ApiElectric.MOD_ID, "energized_flower"),
                 new BlockItem(ENERGIZED_FLOWER, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
 
-        Registry.register(Registry.ITEM,
-                new Identifier(ApiElectric.MOD_ID, "nectar_tube"),
-                new BlockItem(NCTR_TUBE, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
     }
 }
 

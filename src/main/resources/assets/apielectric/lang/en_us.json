@@ -20,9 +20,9 @@
   "tooltip.apielectric.pollen_transducer": "Converts HoneyCharge into other modded energy.",
   "tooltip.apielectric.pollen_transducer.advanced": "Compatible with FE, RF, and AE2.",
 
-  "block.apielectric.energized_flower": "Energized Flower"
+  "block.apielectric.energized_flower": "Energized Flower",
 
-
+  "block.apielectric.nectar_tube": "Nectar Tube"
 
 }
 

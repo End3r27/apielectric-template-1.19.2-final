@@ -1,13 +1,10 @@
 package end3r.apielectric.registry;
 
 import end3r.apielectric.ApiElectric;
-import end3r.apielectric.block.NectarTubeBlock;
-import end3r.apielectric.block.entity.NectarTubeBlockEntity;
 import end3r.apielectric.block.entity.BaseHoneyChargeBlockEntity;
 import end3r.apielectric.block.entity.CombCapacitorBlockEntity;
 import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
 import end3r.apielectric.block.entity.PollenTransducerBlockEntity;
-import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -40,11 +37,6 @@ public class ModBlockEntities {
                     BlockEntityType.Builder.create(BaseHoneyChargeBlockEntity::new, ModBlocks.BASE_HONEY_CHARGE_BLOCK).build(null)
             );
 
-    public static final BlockEntityType<NectarTubeBlockEntity> NECTAR_TUBE_BLOCK_ENTITY = Registry.register(
-            Registry.BLOCK_ENTITY_TYPE,
-            new Identifier("apielectric", "nectar_tube"),
-            BlockEntityType.Builder.create(NectarTubeBlockEntity::new, ModBlocks.NCTR_TUBE).build(null)
-    );
 
 
     public static void registerBlockEntities() {
