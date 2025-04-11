@@ -16,10 +16,10 @@ import net.minecraft.nbt.NbtCompound;
 import java.lang.reflect.Field;
 
 public class EnergyBeeEntity extends PathAwareEntity implements Flutterer {
-    public EnergyBeeEntity(EntityType<? extends BeeEntity> entityType, World world) {
+    public EnergyBeeEntity(EntityType<? extends EnergyBeeEntity> entityType, World world) {
         super(entityType, world);
-
     }
+
     private int storedEnergy = 0;
     private static final int MAX_ENERGY = 100;
 
