@@ -89,7 +89,8 @@ public class HoneyChargeFurnaceBlock extends BlockWithEntity implements HoneyCha
 
     @Override
     public void receiveHoneyCharge(int amount) {
-        // This method is called by HoneyCharge transfer system
-        // The block entity handles actual energy storage
+        // This method is required by the HoneyChargeReceiver interface
+        // But the actual implementation is in the block entity
+        // This method is never actually called - it's just here to satisfy the interface
     }
 }

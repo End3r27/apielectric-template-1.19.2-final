@@ -4,13 +4,17 @@ import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
 import end3r.apielectric.registry.ModBlockEntities;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.block.entity.BlockEntityTicker;
+import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.ItemScatterer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 public class EnergyApiaryBlock extends Block implements BlockEntityProvider {
 
@@ -22,6 +26,18 @@ public class EnergyApiaryBlock extends Block implements BlockEntityProvider {
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         // Return a new instance of EnergyApiaryBlockEntity
         return new EnergyApiaryBlockEntity(pos, state);
+    }
+
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        return BlockRenderType.MODEL;
+    }
+
+    @Nullable
+    @Override
+    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        return checkType(type, ModBlockEntities.ENERGY_APIARY_ENTITY,
+                (tickWorld, pos, tickState, blockEntity) -> EnergyApiaryBlockEntity.tick(tickWorld, pos, tickState, blockEntity));
     }
 
     @Override
@@ -38,6 +54,7 @@ public class EnergyApiaryBlock extends Block implements BlockEntityProvider {
             super.onStateReplaced(state, world, pos, newState, moved);
         }
     }
+
     @Override
     public void onPlaced(World world, BlockPos pos, BlockState state, net.minecraft.entity.LivingEntity placer, ItemStack stack) {
         super.onPlaced(world, pos, state, placer, stack);
@@ -52,5 +69,4 @@ public class EnergyApiaryBlock extends Block implements BlockEntityProvider {
             }
         }
     }
-
 }

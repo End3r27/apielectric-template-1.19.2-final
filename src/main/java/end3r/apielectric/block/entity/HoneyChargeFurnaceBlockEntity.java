@@ -1,5 +1,6 @@
 package end3r.apielectric.block.entity;
 
+import end3r.apielectric.energy.HoneyChargeReceiver;
 import end3r.apielectric.registry.ModBlockEntities;
 import end3r.apielectric.screen.HoneyChargeFurnaceScreenHandler;
 import net.minecraft.block.BlockState;
@@ -20,10 +21,14 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import end3r.apielectric.block.HoneyChargeFurnaceBlock;
+import net.minecraft.particle.ParticleTypes;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.server.world.ServerWorld;
 
 import java.util.Optional;
 
-public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory {
+public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory, HoneyChargeReceiver {
     private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
 
     // Input slot, output slot, and optional upgrade slot
@@ -112,6 +117,44 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
         progress = nbt.getInt("honey_charge_furnace.progress");
         honeyCharge = nbt.getInt("honey_charge_furnace.honeyCharge");
         honeyChargeBurnTime = nbt.getInt("honey_charge_furnace.honeyChargeBurnTime");
+    }
+
+    /**
+     * Implementation of HoneyChargeReceiver interface
+     * @param amount The amount of honey charge to receive
+     */
+    @Override
+    public void receiveHoneyCharge(int amount) {
+        if (amount <= 0) return;
+
+        // Limit to available space
+        int spaceAvailable = maxHoneyCharge - honeyCharge;
+        int actualAmount = Math.min(amount, spaceAvailable);
+
+        if (actualAmount > 0) {
+            honeyCharge += actualAmount;
+            markDirty();
+
+            // Visual feedback when receiving charge
+            if (world != null && !world.isClient) {
+                world.playSound(
+                        null,
+                        pos,
+                        SoundEvents.BLOCK_HONEY_BLOCK_PLACE,
+                        SoundCategory.BLOCKS,
+                        0.7f,
+                        1.2f
+                );
+
+                ((ServerWorld) world).spawnParticles(
+                        ParticleTypes.ELECTRIC_SPARK,
+                        pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
+                        3, // number of particles
+                        0.2, 0.1, 0.2, // spread
+                        0.01 // speed
+                );
+            }
+        }
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, HoneyChargeFurnaceBlockEntity entity) {

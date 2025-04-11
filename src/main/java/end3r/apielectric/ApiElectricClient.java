@@ -26,7 +26,7 @@ public class ApiElectricClient implements ClientModInitializer {
         EntityRendererRegistry.register(ModEntities.ENERGY_BEE, EnergyBeeEntityRenderer::new);
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.HONEY_CHARGE_CONDUIT, RenderLayer.getTranslucent());
 
-        ClientScreenRegistry.register(
+        net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry.register(
                 ModScreenHandlers.HONEY_CHARGE_FURNACE_SCREEN_HANDLER,
                 HoneyChargeFurnaceScreen::new
         );

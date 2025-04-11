@@ -44,6 +44,16 @@ public class ModBlockEntities {
                             ModBlocks.HONEY_CHARGE_CONDUIT).build()
             );
 
+    // Add to ModBlockEntities.java
+    public static final BlockEntityType<HoneyChargeFurnaceBlockEntity> HONEY_CHARGE_FURNACE_BLOCK_ENTITY =
+            Registry.register(
+                    Registry.BLOCK_ENTITY_TYPE,
+                    new Identifier(ApiElectric.MOD_ID, "honey_charge_furnace"),
+                    FabricBlockEntityTypeBuilder.create(
+                            HoneyChargeFurnaceBlockEntity::new,
+                            ModBlocks.HONEY_CHARGE_FURNACE).build()
+            );
+
 
     public static void registerBlockEntities() {
         // Method kept for explicit initialization if needed

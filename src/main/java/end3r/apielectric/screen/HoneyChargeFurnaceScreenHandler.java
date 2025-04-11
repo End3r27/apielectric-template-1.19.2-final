@@ -13,7 +13,7 @@ import net.minecraft.screen.slot.Slot;
 
 public class HoneyChargeFurnaceScreenHandler extends ScreenHandler {
     private final Inventory inventory;
-    private final PropertyDelegate propertyDelegate;
+    public final PropertyDelegate propertyDelegate;
 
     public HoneyChargeFurnaceScreenHandler(int syncId, PlayerInventory playerInventory) {
         this(syncId, playerInventory, new SimpleInventory(3), new ArrayPropertyDelegate(4));
