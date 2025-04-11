@@ -1,10 +1,10 @@
 package end3r.apielectric;
 
-import end3r.apielectric.block.entity.BaseHoneyChargeBlockEntity;
-import end3r.apielectric.registry.ModBlockEntities;
+import end3r.apielectric.block.NectarTubeBlock;
 import end3r.apielectric.registry.ModRegistry;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.block.entity.BlockEntityType;
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.minecraft.client.render.RenderLayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,14 +14,18 @@ public class ApiElectric implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
-
+		// Register blocks and other mod components
 		ModRegistry.registerAll();
 
-		LOGGER.info("Hello from ApiElectric!");
+		// Register Nectar Tube Block model and texture rendering
+		registerModels();
 
-
+		// Print initialization log message
+		LOGGER.info("ApiElectric mod initialized!");
 	}
-	public static final BlockEntityType<BaseHoneyChargeBlockEntity> BASE_HONEY_CHARGE_BLOCK_ENTITY =
-			ModBlockEntities.BASE_HONEY_CHARGE_BLOCK_ENTITY;
-}
 
+	private void registerModels() {
+		// Corrected: passing the NectarTubeBlock class reference and RenderLayer
+		BlockRenderLayerMap.INSTANCE.putBlock(NectarTubeBlock, RenderLayer.getTranslucent());
+	}
+}

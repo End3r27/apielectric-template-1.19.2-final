@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "connected=true": { "model": "apielectric:block/nectar_tube_connected" },
+    "connected=false": { "model": "apielectric:block/nectar_tube_disconnected" }
+  }
+}

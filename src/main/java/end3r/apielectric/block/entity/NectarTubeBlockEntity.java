@@ -1,4 +1,4 @@
-package end3r.apielectric.block;
+package end3r.apielectric.block.entity;
 
 
 import end3r.apielectric.energy.HoneyChargeProvider;

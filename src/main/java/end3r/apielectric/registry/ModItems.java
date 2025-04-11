@@ -32,6 +32,7 @@ public class ModItems {
                     stacks.add(new ItemStack(ModBlocks.ENERGY_APIARY));
                     stacks.add(new ItemStack(ModBlocks.POLLEN_TRANSDUCER));
                     stacks.add(new ItemStack(ModBlocks.ENERGIZED_FLOWER));
+                    stacks.add(new ItemStack(ModBlocks.NCTR_TUBE));
                 })
                 .build();
     }
