@@ -1,0 +1,6 @@
+{
+  "variants": {
+    "active=true": { "model": "apielectric:block/honey_charge_conduit_active" },
+    "active=false": { "model": "apielectric:block/honey_charge_conduit_inactive" }
+  }
+}

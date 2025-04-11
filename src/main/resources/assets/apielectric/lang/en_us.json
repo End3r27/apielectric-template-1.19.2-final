@@ -22,7 +22,10 @@
 
   "block.apielectric.energized_flower": "Energized Flower",
 
-  "block.apielectric.nectar_tube": "Nectar Tube"
+  "block.apielectric.nectar_tube": "Nectar Tube",
+
+  "block.apielectric.honey_charge_conduit": "Honey Charge Conduit"
+
 
 }
 

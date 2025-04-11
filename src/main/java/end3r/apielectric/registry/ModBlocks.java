@@ -6,6 +6,7 @@ import end3r.apielectric.item.TooltipBlockItem;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
@@ -19,8 +20,8 @@ public class ModBlocks {
     public static final Block POLLEN_TRANSDUCER = new PollenTransducerBlock(Block.Settings.of(net.minecraft.block.Material.STONE));
     public static final Block BASE_HONEY_CHARGE_BLOCK = new BaseHoneyChargeBlock(Block.Settings.of(net.minecraft.block.Material.WOOD));
     public static final Block ENERGIZED_FLOWER = new EnergizedFlowerBlock(FabricBlockSettings.copyOf(Blocks.DANDELION).nonOpaque().luminance(state -> 7)); // optional: emits light
-
-
+    public static final Block HONEY_CHARGE_CONDUIT = new HoneyChargeConduitBlock(Block.Settings.of(Material.GLASS));
+    public static final Block HONEY_CHARGE_FURNACE = new HoneyChargeFurnaceBlock((Block.Settings.of(net.minecraft.block.Material.METAL)));
 
     public static void registerBlocks() {
         // Register blocks
@@ -29,6 +30,8 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "pollen_transducer"), POLLEN_TRANSDUCER);
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "base_honey_charge_block"), BASE_HONEY_CHARGE_BLOCK);
         Registry.register(Registry.BLOCK, new Identifier("apielectric", "energized_flower"), ENERGIZED_FLOWER);
+        Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "honey_charge_conduit"), HONEY_CHARGE_CONDUIT);
+        Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "honey_charge_furnace"), HONEY_CHARGE_FURNACE);
 
 
         // Register block items (used in inventory)
@@ -52,6 +55,14 @@ public class ModBlocks {
         Registry.register(Registry.ITEM,
                 new Identifier(ApiElectric.MOD_ID, "energized_flower"),
                 new BlockItem(ENERGIZED_FLOWER, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
+
+        Registry.register(Registry.ITEM,
+                new Identifier(ApiElectric.MOD_ID, "honey_charge_conduit"),
+                    new BlockItem(HONEY_CHARGE_CONDUIT, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
+
+        Registry.register(Registry.ITEM,
+                new Identifier(ApiElectric.MOD_ID, "honey_charge_furnace"),
+                new BlockItem(HONEY_CHARGE_FURNACE, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
 
     }
 }
