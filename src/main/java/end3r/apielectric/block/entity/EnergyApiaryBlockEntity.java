@@ -12,6 +12,18 @@ public class EnergyApiaryBlockEntity extends BaseHoneyChargeBlockEntity {
     public EnergyApiaryBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ENERGY_APIARY_ENTITY, pos, state, 10000);
     }
+    
+    @Override
+    public void writeNbt(NbtCompound nbt) {
+        super.writeNbt(nbt);
+        nbt.putInt("HoneyCharge", this.getStoredHoneyCharge());
+    }
+
+    @Override
+    public void readNbt(NbtCompound nbt) {
+        super.readNbt(nbt);
+        this.setStoredHoneyCharge(nbt.getInt("HoneyCharge"));
+    }
     public void receiveEnergy(int amount) {
         this.addHoneyCharge(amount);
         markDirty();
@@ -36,5 +48,9 @@ public class EnergyApiaryBlockEntity extends BaseHoneyChargeBlockEntity {
                     1.2f  // pitch
             );
         }
+
+
     }
+
+
 }

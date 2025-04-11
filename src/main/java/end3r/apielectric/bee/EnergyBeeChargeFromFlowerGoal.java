@@ -26,7 +26,7 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
 
     private static final int MAX_FAILED_ATTEMPTS = 3;
     private static final int FLOWER_SEARCH_COOLDOWN = 40; // Ticks between searches
-    private static final int FLOWER_SEARCH_RANGE = 8; // Range for flower search
+    private static final int FLOWER_SEARCH_RANGE = 16; // Range for flower search
 
     public EnergyBeeChargeFromFlowerGoal(EnergyBeeEntity bee) {
         this.bee = bee;
@@ -37,10 +37,6 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
     public boolean canStart() {
         // Additional debug - run this every 5 seconds
         if (bee.getWorld().getTime() % 100 == 0) {
-            ApiElectric.LOGGER.info("[BeeDebug] Checking if EnergyBeeChargeFromFlowerGoal can start:");
-            ApiElectric.LOGGER.info("[BeeDebug] - Bee energy: " + bee.getStoredEnergy() + "/" + bee.getMaxStoredEnergy());
-            ApiElectric.LOGGER.info("[BeeDebug] - Max failed attempts: " + failedPollinationAttempts + "/" + MAX_FAILED_ATTEMPTS);
-            ApiElectric.LOGGER.info("[BeeDebug] - Search cooldown: " + searchCooldown);
         }
 
         // Don't start if bee is maxed on energy or not on ground
@@ -67,10 +63,8 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
         if (flower.isPresent()) {
             targetFlowerPos = flower.get();
             hasTarget = true;
-            ApiElectric.LOGGER.info("[BeeDebug] Found flower at " + targetFlowerPos);
             return true;
         } else {
-            ApiElectric.LOGGER.info("[BeeDebug] No flowers found within range");
         }
 
         // Set a cooldown before next search
@@ -91,7 +85,7 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
 
         // Manual search for better debugging
         for (BlockPos pos : BlockPos.iterateOutwards(beePos, FLOWER_SEARCH_RANGE, FLOWER_SEARCH_RANGE, FLOWER_SEARCH_RANGE)) {
-            if (world.getBlockState(pos).isIn(ModBlockTags.ENERGIZED_FLOWERS)) {
+            if (world.getBlockState(pos).isOf(ModBlocks.ENERGIZED_FLOWER)) {
                 foundBlocks++;
                 if (foundPos == null) {
                     foundPos = pos.toImmutable();
@@ -133,9 +127,7 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
     public void start() {
         pollinationTicks = 0;
         failedPollinationAttempts = 0;
-        ApiElectric.LOGGER.info("[BeeDebug] Starting navigation to flower at " + targetFlowerPos);
-        ApiElectric.LOGGER.info("[BeeDebug] Bee position: " + bee.getBlockPos() + ", Distance: " +
-                Math.sqrt(bee.getBlockPos().getSquaredDistance(targetFlowerPos)));
+                Math.sqrt(bee.getBlockPos().getSquaredDistance(targetFlowerPos));
 
         navigateToFlower();
     }
@@ -143,9 +135,7 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
     private void navigateToFlower() {
         if (targetFlowerPos != null) {
             Vec3d targetPos = Vec3d.ofCenter(targetFlowerPos);
-            ApiElectric.LOGGER.info("[BeeDebug] Setting navigation target to " + targetPos);
             boolean success = bee.getNavigation().startMovingTo(targetPos.x, targetPos.y + 0.5, targetPos.z, 0.8D);
-            ApiElectric.LOGGER.info("[BeeDebug] Navigation start result: " + (success ? "success" : "failed"));
         }
     }
 
@@ -158,7 +148,6 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
 
         // Debug distance output occasionally
         if (bee.getWorld().getTime() % 100 == 0) {
-            ApiElectric.LOGGER.info("Energy Bee distance to flower: " + Math.sqrt(distSq) + ", position: " + bee.getBlockPos() + ", target: " + targetFlowerPos);
         }
 
         // If we're close enough to the flower - INCREASED DISTANCE CHECK
@@ -184,7 +173,6 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
             // Once we've pollinated enough, add energy
             if (pollinationTicks >= maxPollinationTicks) {
                 bee.addEnergy(10);
-                ApiElectric.LOGGER.info("Energy Bee collected energy from flower. Current energy: " + bee.getStoredEnergy());
                 hasTarget = false; // Reset target
             }
         }
@@ -196,12 +184,9 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
             bee.getNavigation().startMovingTo(flowerPos.x, flowerPos.y + 0.5, flowerPos.z, 0.8D);
             failedPollinationAttempts++;
 
-            // Log the attempt
-            ApiElectric.LOGGER.info("Energy Bee re-navigation attempt: " + failedPollinationAttempts);
 
             // If we've failed too many times, give up on this flower
             if (failedPollinationAttempts >= MAX_FAILED_ATTEMPTS) {
-                ApiElectric.LOGGER.info("Energy Bee abandoning flower after too many failed attempts");
                 hasTarget = false;
             }
         }
@@ -212,6 +197,5 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
         bee.getNavigation().stop();
         pollinationTicks = 0;
         searchCooldown = 20; // Small cooldown before searching again
-        ApiElectric.LOGGER.info("Energy Bee stopped charging from flower");
     }
 }

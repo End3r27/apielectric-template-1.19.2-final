@@ -55,9 +55,7 @@ public class EnergyBeeEntity extends PathAwareEntity implements Flutterer {
         int oldEnergy = this.storedEnergy;
         this.storedEnergy = Math.min(this.storedEnergy + amount, MAX_ENERGY);
 
-        if (oldEnergy != this.storedEnergy) {
-            ApiElectric.LOGGER.info("Energy Bee energy changed: " + oldEnergy + " -> " + this.storedEnergy);
-        }
+
     }
 
     public int getMaxStoredEnergy() {
