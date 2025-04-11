@@ -61,10 +61,9 @@ public class EnergyBeeEntity extends BeeEntity {
         super.initGoals();
         // Add custom goal for charging from flowers or other behavior
         this.goalSelector.add(5, new EnergyBeeChargeFromFlowerGoal(this));
-        this.goalSelector.add(4, new end3r.apielectric.bee.GoToApiaryGoal(this));
-
-
-        }
+        // Give higher priority to the apiary goal
+        this.goalSelector.add(3, new GoToApiaryGoal(this)); // Changed from 4 to 3 for higher priority
+    }
 
 }
 

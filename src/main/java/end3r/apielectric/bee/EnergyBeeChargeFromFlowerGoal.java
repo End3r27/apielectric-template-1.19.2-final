@@ -1,5 +1,6 @@
 package end3r.apielectric.bee;
 
+import end3r.apielectric.ApiElectric;
 import end3r.apielectric.registry.ModBlockTags;
 import end3r.apielectric.registry.ModBlocks;
 import net.minecraft.block.Blocks;
@@ -24,7 +25,12 @@ public class EnergyBeeChargeFromFlowerGoal extends MoveToTargetPosGoal {
     public void tick() {
         super.tick();
         if (hasReached()) {
-            bee.addEnergy(100); // Slowly charge energy
+            int oldEnergy = bee.getStoredEnergy();
+            bee.addEnergy(5); // Reduced from 100 to 5 to slow down charging
+
+            if (bee.getWorld().getTime() % 100 == 0 || oldEnergy != bee.getStoredEnergy()) {
+                ApiElectric.LOGGER.info("Energy Bee charging at flower: " + bee.getStoredEnergy() + "/" + bee.getMaxStoredEnergy());
+            }
         }
     }
 
