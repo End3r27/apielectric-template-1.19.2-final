@@ -1,37 +1,86 @@
+// Replace or modify your EnergyBeeChargeFromFlowerGoal.java
 package end3r.apielectric.bee;
 
 import end3r.apielectric.ApiElectric;
 import end3r.apielectric.registry.ModBlockTags;
-import end3r.apielectric.registry.ModBlocks;
-import net.minecraft.block.Blocks;
-import net.minecraft.entity.ai.goal.MoveToTargetPosGoal;
+import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldView;
+import net.minecraft.world.World;
 
-public class EnergyBeeChargeFromFlowerGoal extends MoveToTargetPosGoal {
+import java.util.EnumSet;
+
+public class EnergyBeeChargeFromFlowerGoal extends Goal {
     private final EnergyBeeEntity bee;
+    private int cooldown = 0;
 
     public EnergyBeeChargeFromFlowerGoal(EnergyBeeEntity bee) {
-        super(bee, 1.0D, 8);
         this.bee = bee;
+        this.setControls(EnumSet.of(Control.MOVE));
     }
 
     @Override
-    protected boolean isTargetPos(WorldView world, BlockPos pos) {
-        return world.getBlockState(pos).isIn(ModBlockTags.ENERGIZED_FLOWERS); // Or tag/custom flower later
+    public boolean canStart() {
+        // Only try to check for flowers every so often
+        if (cooldown > 0) {
+            cooldown--;
+            return false;
+        }
+
+        cooldown = 20; // Check every second
+
+        // Simple log to see if this goal is being evaluated
+        ApiElectric.LOGGER.info("Energy Bee checking if can charge from flower");
+
+        // Check if there's a flower below the bee
+        return isFlowerBelow();
+    }
+
+    private boolean isFlowerBelow() {
+        World world = bee.getWorld();
+        BlockPos beePos = bee.getBlockPos();
+
+        // Check blocks in a small radius below the bee
+        for (int y = 0; y >= -2; y--) {
+            for (int x = -1; x <= 1; x++) {
+                for (int z = -1; z <= 1; z++) {
+                    BlockPos checkPos = beePos.add(x, y, z);
+                    if (world.getBlockState(checkPos).isIn(ModBlockTags.ENERGIZED_FLOWERS)) {
+                        ApiElectric.LOGGER.info("Energy Bee found flower at " + checkPos);
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public void start() {
+        ApiElectric.LOGGER.info("Energy Bee starting to charge from flower");
     }
 
     @Override
     public void tick() {
-        super.tick();
-        if (hasReached()) {
-            int oldEnergy = bee.getStoredEnergy();
-            bee.addEnergy(5); // Reduced from 100 to 5 to slow down charging
+        // Simple charging
+        int oldEnergy = bee.getStoredEnergy();
+        bee.addEnergy(5);
 
-            if (bee.getWorld().getTime() % 100 == 0 || oldEnergy != bee.getStoredEnergy()) {
-                ApiElectric.LOGGER.info("Energy Bee charging at flower: " + bee.getStoredEnergy() + "/" + bee.getMaxStoredEnergy());
-            }
+        ApiElectric.LOGGER.info("Energy Bee charged: " + oldEnergy + " -> " + bee.getStoredEnergy());
+
+        // Continue for a moment then stop
+        if (bee.getWorld().getRandom().nextInt(20) == 0) {
+            stop();
         }
     }
 
+    @Override
+    public boolean shouldContinue() {
+        return isFlowerBelow();
+    }
+
+    @Override
+    public void stop() {
+        ApiElectric.LOGGER.info("Energy Bee stopped charging");
+    }
 }

@@ -1,5 +1,6 @@
 package end3r.apielectric.bee;
 
+import end3r.apielectric.ApiElectric;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -39,8 +40,14 @@ public class EnergyBeeEntity extends BeeEntity {
         this.storedEnergy = Math.min(energy, MAX_ENERGY);
     }
 
+    // In EnergyBeeEntity.java
     public void addEnergy(int amount) {
-        setStoredEnergy(this.storedEnergy + amount);
+        int oldEnergy = this.storedEnergy;
+        this.storedEnergy = Math.min(this.storedEnergy + amount, MAX_ENERGY);
+
+        if (oldEnergy != this.storedEnergy) {
+            ApiElectric.LOGGER.info("Energy Bee energy changed: " + oldEnergy + " -> " + this.storedEnergy);
+        }
     }
 
     public int getMaxStoredEnergy() {
@@ -59,10 +66,23 @@ public class EnergyBeeEntity extends BeeEntity {
     @Override
     protected void initGoals() {
         super.initGoals();
-        // Add custom goal for charging from flowers or other behavior
-        this.goalSelector.add(5, new EnergyBeeChargeFromFlowerGoal(this));
-        // Give higher priority to the apiary goal
-        this.goalSelector.add(3, new GoToApiaryGoal(this)); // Changed from 4 to 3 for higher priority
+
+        // Add this debug message
+        ApiElectric.LOGGER.info("Initializing goals for Energy Bee");
+
+        // Make the charging goal higher priority (lower number)
+        this.goalSelector.add(2, new EnergyBeeChargeFromFlowerGoal(this));
+        this.goalSelector.add(3, new GoToApiaryGoal(this));
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+
+        // Log only occasionally to avoid spam
+        if (this.getWorld().getTime() % 200 == 0) {  // Every 10 seconds
+            ApiElectric.LOGGER.info("Energy Bee ticking: ID=" + this.getId() + ", Energy=" + this.getStoredEnergy());
+        }
     }
 
 }
