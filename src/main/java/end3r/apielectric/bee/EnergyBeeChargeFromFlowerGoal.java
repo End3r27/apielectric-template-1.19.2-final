@@ -41,10 +41,10 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
         World world = bee.getWorld();
         BlockPos beePos = bee.getBlockPos();
 
-        // Check blocks in a small radius below the bee
-        for (int y = 0; y >= -2; y--) {
-            for (int x = -1; x <= 1; x++) {
-                for (int z = -1; z <= 1; z++) {
+        // Check blocks in a small radius around the bee, not just below
+        for (int y = -1; y <= 1; y++) {
+            for (int x = -2; x <= 2; x++) {
+                for (int z = -2; z <= 2; z++) {
                     BlockPos checkPos = beePos.add(x, y, z);
                     if (world.getBlockState(checkPos).isIn(ModBlockTags.ENERGIZED_FLOWERS)) {
                         ApiElectric.LOGGER.info("Energy Bee found flower at " + checkPos);
@@ -64,27 +64,63 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
 
     @Override
     public void tick() {
-        // Ensure bee is at the right position
-        if (!bee.hasAngerTime() && isFlowerBelow()) {
-            // Make the bee "sit" on the flower
-            bee.getMoveControl().moveTo(bee.getX(), bee.getY(), bee.getZ(), 0.3D);
+        // Find the nearest flower
+        BlockPos nearestFlower = findNearestFlower();
 
-            // Simple charging
-            int oldEnergy = bee.getStoredEnergy();
-            bee.addEnergy(5);
-
-            // Make this more noticeable - particles, sound, etc.
-            if (bee.getWorld().isClient() && oldEnergy != bee.getStoredEnergy()) {
-                // Spawn particles at client side
-                bee.getWorld().addParticle(
-                        ParticleTypes.ELECTRIC_SPARK,
-                        bee.getX(), bee.getY() + 0.5, bee.getZ(),
-                        0, 0.1, 0
+        if (nearestFlower != null) {
+            // Move toward the flower if not already there
+            double distance = bee.getBlockPos().getSquaredDistance(nearestFlower);
+            if (distance > 1.5) {
+                bee.getNavigation().startMovingTo(
+                        nearestFlower.getX() + 0.5,
+                        nearestFlower.getY() + 0.5,
+                        nearestFlower.getZ() + 0.5,
+                        0.5D
                 );
-            }
+            } else {
+                // We're at the flower, stop moving and start charging
+                bee.getNavigation().stop();
 
-            ApiElectric.LOGGER.info("Energy Bee charged: " + oldEnergy + " -> " + bee.getStoredEnergy());
+                // Simple charging
+                int oldEnergy = bee.getStoredEnergy();
+                bee.addEnergy(5);
+
+                // Particles and effects
+                if (bee.getWorld().isClient() && oldEnergy != bee.getStoredEnergy()) {
+                    bee.getWorld().addParticle(
+                            ParticleTypes.ELECTRIC_SPARK,
+                            bee.getX(), bee.getY() + 0.5, bee.getZ(),
+                            0, 0.1, 0
+                    );
+                }
+            }
         }
+    }
+
+    private BlockPos findNearestFlower() {
+        World world = bee.getWorld();
+        BlockPos beePos = bee.getBlockPos();
+        BlockPos nearest = null;
+        double nearestDist = Double.MAX_VALUE;
+
+        // Check in a radius around bee
+        int radius = 5;
+        for (int y = -2; y <= 2; y++) {
+            for (int x = -radius; x <= radius; x++) {
+                for (int z = -radius; z <= radius; z++) {
+                    BlockPos checkPos = beePos.add(x, y, z);
+                    if (world.getBlockState(checkPos).isIn(ModBlockTags.ENERGIZED_FLOWERS)) {
+                        double dist = checkPos.getSquaredDistance(beePos);
+                        if (dist < nearestDist) {
+                            nearestDist = dist;
+                            nearest = checkPos;
+                        }
+                    }
+                }
+            }
+        }
+
+        return nearest;
     }
 
     @Override
