@@ -4,6 +4,7 @@ package end3r.apielectric.bee;
 import end3r.apielectric.ApiElectric;
 import end3r.apielectric.registry.ModBlockTags;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -15,7 +16,8 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
 
     public EnergyBeeChargeFromFlowerGoal(EnergyBeeEntity bee) {
         this.bee = bee;
-        this.setControls(EnumSet.of(Control.MOVE));
+        // Use multiple controls to properly handle the goal
+        this.setControls(EnumSet.of(Control.MOVE, Control.LOOK));
     }
 
     @Override
@@ -62,15 +64,26 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
 
     @Override
     public void tick() {
-        // Simple charging
-        int oldEnergy = bee.getStoredEnergy();
-        bee.addEnergy(5);
+        // Ensure bee is at the right position
+        if (!bee.hasAngerTime() && isFlowerBelow()) {
+            // Make the bee "sit" on the flower
+            bee.getMoveControl().moveTo(bee.getX(), bee.getY(), bee.getZ(), 0.3D);
 
-        ApiElectric.LOGGER.info("Energy Bee charged: " + oldEnergy + " -> " + bee.getStoredEnergy());
+            // Simple charging
+            int oldEnergy = bee.getStoredEnergy();
+            bee.addEnergy(5);
 
-        // Continue for a moment then stop
-        if (bee.getWorld().getRandom().nextInt(20) == 0) {
-            stop();
+            // Make this more noticeable - particles, sound, etc.
+            if (bee.getWorld().isClient() && oldEnergy != bee.getStoredEnergy()) {
+                // Spawn particles at client side
+                bee.getWorld().addParticle(
+                        ParticleTypes.ELECTRIC_SPARK,
+                        bee.getX(), bee.getY() + 0.5, bee.getZ(),
+                        0, 0.1, 0
+                );
+            }
+
+            ApiElectric.LOGGER.info("Energy Bee charged: " + oldEnergy + " -> " + bee.getStoredEnergy());
         }
     }
 

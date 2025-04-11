@@ -2,10 +2,12 @@ package end3r.apielectric.bee;
 
 import end3r.apielectric.ApiElectric;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
 import net.minecraft.nbt.NbtCompound;
 
@@ -65,24 +67,23 @@ public class EnergyBeeEntity extends BeeEntity {
     // Initialize goals, including the energy charging goal
     @Override
     protected void initGoals() {
-        super.initGoals();
+        // Don't call super.initGoals() if you want to completely replace the vanilla behaviors
+        // Instead, copy only the behaviors you want to keep from BeeEntity
 
-        // Add this debug message
-        ApiElectric.LOGGER.info("Initializing goals for Energy Bee");
+        // Basic behaviors (movement, floating, looking)
+        this.goalSelector.add(0, new SwimGoal(this));
+        this.goalSelector.add(1, new EscapeDangerGoal(this, 1.4D));
+        this.goalSelector.add(2, new AnimalMateGoal(this, 1.0D));
 
-        // Make the charging goal higher priority (lower number)
-        this.goalSelector.add(2, new EnergyBeeChargeFromFlowerGoal(this));
-        this.goalSelector.add(3, new GoToApiaryGoal(this));
-    }
+        // IMPORTANT: Add your charging goal with HIGH priority (lower number)
+        this.goalSelector.add(3, new EnergyBeeChargeFromFlowerGoal(this));
+        this.goalSelector.add(4, new GoToApiaryGoal(this));
 
-    @Override
-    public void tick() {
-        super.tick();
-
-        // Log only occasionally to avoid spam
-        if (this.getWorld().getTime() % 200 == 0) {  // Every 10 seconds
-            ApiElectric.LOGGER.info("Energy Bee ticking: ID=" + this.getId() + ", Energy=" + this.getStoredEnergy());
-        }
+        // Add other vanilla bee goals with LOWER priority
+        this.goalSelector.add(5, new FollowParentGoal(this, 1.1D));
+        this.goalSelector.add(6, new WanderAroundFarGoal(this, 1.0D));
+        this.goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 6.0F));
+        this.goalSelector.add(8, new LookAroundGoal(this));
     }
 
 }
