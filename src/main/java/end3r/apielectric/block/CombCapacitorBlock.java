@@ -39,5 +39,19 @@ public class CombCapacitorBlock extends Block implements BlockEntityProvider {
             super.onStateReplaced(state, world, pos, newState, moved);
         }
     }
+    @Override
+    public void onPlaced(World world, BlockPos pos, BlockState state, net.minecraft.entity.LivingEntity placer, ItemStack stack) {
+        super.onPlaced(world, pos, state, placer, stack);
+
+        if (stack.hasNbt() && stack.getNbt().contains("HoneyCharge")) {
+            int storedCharge = stack.getNbt().getInt("HoneyCharge");
+
+            // Get the block entity and set the charge
+            BlockEntity blockEntity = world.getBlockEntity(pos);
+            if (blockEntity instanceof EnergyApiaryBlockEntity apiaryEntity) {
+                apiaryEntity.setStoredHoneyCharge(storedCharge);
+            }
+        }
+    }
 
 }

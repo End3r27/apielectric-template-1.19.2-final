@@ -1,6 +1,7 @@
 package end3r.apielectric;
 
 import end3r.apielectric.block.NectarTubeBlock;
+import end3r.apielectric.registry.ModBlocks;
 import end3r.apielectric.registry.ModRegistry;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -26,6 +27,5 @@ public class ApiElectric implements ModInitializer {
 
 	private void registerModels() {
 		// Corrected: passing the NectarTubeBlock class reference and RenderLayer
-		BlockRenderLayerMap.INSTANCE.putBlock(NectarTubeBlock, RenderLayer.getTranslucent());
-	}
+		BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.NCTR_TUBE, RenderLayer.getTranslucent());	}
 }
