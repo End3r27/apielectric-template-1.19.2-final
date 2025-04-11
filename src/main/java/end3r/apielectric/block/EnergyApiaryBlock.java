@@ -2,7 +2,7 @@ package end3r.apielectric.block;
 
 import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
 import end3r.apielectric.registry.ModBlockEntities;
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockWithEntity;  // Changed from 'Block'
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -16,7 +16,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
-public class EnergyApiaryBlock extends Block implements BlockEntityProvider {
+public class EnergyApiaryBlock extends BlockWithEntity {  // Changed from 'Block implements BlockEntityProvider'
 
     public EnergyApiaryBlock(Settings settings) {
         super(settings);
@@ -36,6 +36,7 @@ public class EnergyApiaryBlock extends Block implements BlockEntityProvider {
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(World world, BlockState state, BlockEntityType<T> type) {
+        // This now works because checkType is inherited from BlockWithEntity
         return checkType(type, ModBlockEntities.ENERGY_APIARY_ENTITY,
                 (tickWorld, pos, tickState, blockEntity) -> EnergyApiaryBlockEntity.tick(tickWorld, pos, tickState, blockEntity));
     }
