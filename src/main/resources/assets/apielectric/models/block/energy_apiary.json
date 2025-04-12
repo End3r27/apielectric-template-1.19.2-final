@@ -1,8 +1,6 @@
 {
-  "parent": "minecraft:block/orientable",
+  "parent": "block/cube_all",
   "textures": {
-    "top": "apielectric:block/energy_apiary_top",
-    "front": "apielectric:block/energy_apiary_front",
-    "side": "apielectric:block/energy_apiary_side"
+    "all": "apielectric:block/energy_apiary"
   }
 }
