@@ -410,7 +410,10 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
 
             // Check what type of energy component the neighbor is
             if (neighborEntity instanceof BaseHoneyChargeBlockEntity honeyBlock) {
-                if (isEnergyProvider(neighborEntity)) {
+                if (neighborEntity instanceof CombCapacitorBlockEntity) {
+                    // CombCapacitor is treated as a storage block
+                    storageBlocks.add(neighborPos);
+                } else if (isEnergyProvider(neighborEntity)) {
                     providers.add(neighborPos);
                 } else if (isEnergyReceiver(neighborEntity)) {
                     receivers.add(neighborPos);
@@ -450,8 +453,9 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
      * Checks if the block entity is an energy receiver
      */
     private boolean isEnergyReceiver(BlockEntity entity) {
-        return entity instanceof HoneyChargeFurnaceBlockEntity ||
-                (entity instanceof CombCapacitorBlockEntity); // CombCapacitor can receive energy
+        // CombCapacitor is no longer considered a dedicated receiver
+        // It will be handled as a storage block that can both receive and provide energy
+        return entity instanceof HoneyChargeFurnaceBlockEntity;
     }
 
     /**
