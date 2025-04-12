@@ -2,17 +2,27 @@
   "block.apielectric.energy_apiary": "Energy Apiary",
   "block.apielectric.comb_capacitor": "Comb Capacitor",
   "block.apielectric.pollen_transducer": "Pollen Transducer",
+  "block.apielectric.energized_flower": "Energized Flower",
+  "block.apielectric.nectar_tube": "Nectar Tube",
+  "block.apielectric.honey_charge_conduit": "Honey Charge Conduit",
+  "block.apielectric.honey_charge_furnace": "Honey Charge Furnace",
 
   "item.apielectric.energy_apiary": "Energy Apiary",
   "item.apielectric.comb_capacitor": "Comb Capacitor",
   "item.apielectric.pollen_transducer": "Pollen Transducer",
+  "item.apielectric.energized_flower": "Energized Flower",
+  "item.apielectric.nectar_tube": "Nectar Tube",
+  "item.apielectric.honey_charge_conduit": "Honey Charge Conduit",
+  "item.apielectric.honey_charge_furnace": "Honey Charge Furnace",
+  "item.apielectric.honey_jar": "Honey Jar",
+  "item.apielectric.energy_bee_spawn_egg": "Energy Bee Spawn Egg",
 
   "itemGroup.apielectric.group": "ApiElectric",
 
   "entity.apielectric.energy_bee": "Energy Bee",
 
   "tooltip.apielectric.energy_apiary": "Generates HoneyCharge from bees.",
-  "tooltip.apielectric.energy_apiary.advanced": "Accepts Energy Bees only. Produces 10 HCU/tick.",
+  "tooltip.apielectric.energy_apiary.advanced": "Accepts Energy Bees only.",
 
   "tooltip.apielectric.comb_capacitor": "Stores large amounts of HoneyCharge.",
   "tooltip.apielectric.comb_capacitor.advanced": "Max Capacity: 40,000 HCU. Transfers via Nectar Tubes.",
@@ -20,12 +30,19 @@
   "tooltip.apielectric.pollen_transducer": "Converts HoneyCharge into other modded energy.",
   "tooltip.apielectric.pollen_transducer.advanced": "Compatible with FE, RF, and AE2.",
 
-  "block.apielectric.energized_flower": "Energized Flower",
-
-  "block.apielectric.nectar_tube": "Nectar Tube",
-
-  "block.apielectric.honey_charge_conduit": "Honey Charge Conduit"
+  "tooltip.apielectric.energized_flower": "Attracts Energy Bees.",
+  "tooltip.apielectric.energized_flower.advanced": "Energy Bees visit these flowers to collect charged pollen.",
 
 
+  "tooltip.apielectric.honey_charge_conduit": "Advanced HoneyCharge transfer block.",
+  "tooltip.apielectric.honey_charge_conduit.advanced": "Transfers up to 500 HCU/tick. Glows when active.",
+
+  "tooltip.apielectric.honey_charge_furnace": "Cooks food using HoneyCharge.",
+  "tooltip.apielectric.honey_charge_furnace.advanced": "Faster than regular furnaces.",
+
+  "tooltip.apielectric.honey_jar": "Concentrated liquid honey.",
+  "tooltip.apielectric.honey_jar.advanced": "Used in crafting recipes for ApiElectric machines.",
+
+  "tooltip.apielectric.energy_bee_spawn_egg": "Spawns an Energy Bee.",
+  "tooltip.apielectric.energy_bee_spawn_egg.advanced": "Energy Bees produce HoneyCharge when housed in an Energy Apiary."
 }
-

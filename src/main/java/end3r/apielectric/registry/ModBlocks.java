@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
-import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -33,37 +32,28 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "honey_charge_conduit"), HONEY_CHARGE_CONDUIT);
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "honey_charge_furnace"), HONEY_CHARGE_FURNACE);
 
+        // Register block items with tooltips
+        registerBlockItem("energy_apiary", ENERGY_APIARY, "energy_apiary");
+        registerBlockItem("comb_capacitor", COMB_CAPACITOR, "comb_capacitor");
+        registerBlockItem("pollen_transducer", POLLEN_TRANSDUCER, "pollen_transducer");
+        registerBlockItem("base_honey_charge_block", BASE_HONEY_CHARGE_BLOCK, "base_honey_charge_block");
+        registerBlockItem("energized_flower", ENERGIZED_FLOWER, "energized_flower");
+        registerBlockItem("honey_charge_conduit", HONEY_CHARGE_CONDUIT, "honey_charge_conduit");
+        registerBlockItem("honey_charge_furnace", HONEY_CHARGE_FURNACE, "honey_charge_furnace");
+    }
 
-        // Register block items (used in inventory)
-        Registry.register(Registry.ITEM,
-                new Identifier(ApiElectric.MOD_ID, "energy_apiary"),
-                new TooltipBlockItem(ENERGY_APIARY, "tooltip.apielectric.energy_apiary", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
-
-        Registry.register(Registry.ITEM,
-                new Identifier(ApiElectric.MOD_ID, "comb_capacitor"),
-                new TooltipBlockItem(COMB_CAPACITOR, "tooltip.apielectric.comb_capacitor", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
-
-        Registry.register(Registry.ITEM,
-                new Identifier(ApiElectric.MOD_ID, "pollen_transducer"),
-                new TooltipBlockItem(POLLEN_TRANSDUCER, "tooltip.apielectric.pollen_transducer", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
-
-        // Use TooltipBlockItem for the Base Honey Charge Block as well
-        Registry.register(Registry.ITEM,
-                new Identifier(ApiElectric.MOD_ID, "base_honey_charge_block"),
-                new TooltipBlockItem(BASE_HONEY_CHARGE_BLOCK, "tooltip.apielectric.base_honey_charge_block", new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
-
-        Registry.register(Registry.ITEM,
-                new Identifier(ApiElectric.MOD_ID, "energized_flower"),
-                new BlockItem(ENERGIZED_FLOWER, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
-
-        Registry.register(Registry.ITEM,
-                new Identifier(ApiElectric.MOD_ID, "honey_charge_conduit"),
-                    new BlockItem(HONEY_CHARGE_CONDUIT, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
-
-        Registry.register(Registry.ITEM,
-                new Identifier(ApiElectric.MOD_ID, "honey_charge_furnace"),
-                new BlockItem(HONEY_CHARGE_FURNACE, new Item.Settings().group(ModItems.APIELECTRIC_GROUP)));
-
+    /**
+     * Helper method to register a block item with tooltips
+     *
+     * @param path The path/identifier for the block
+     * @param block The block instance
+     * @param tooltipKey The tooltip key suffix (without "tooltip.apielectric." prefix)
+     */
+    private static void registerBlockItem(String path, Block block, String tooltipKey) {
+        Registry.register(
+                Registry.ITEM,
+                new Identifier(ApiElectric.MOD_ID, path),
+                new TooltipBlockItem(block, tooltipKey, new Item.Settings().group(ModItems.APIELECTRIC_GROUP))
+        );
     }
 }
-

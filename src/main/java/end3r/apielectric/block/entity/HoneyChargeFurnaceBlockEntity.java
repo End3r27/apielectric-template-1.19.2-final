@@ -29,12 +29,13 @@ import net.minecraft.server.world.ServerWorld;
 import java.util.Optional;
 
 public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedScreenHandlerFactory, ImplementedInventory, HoneyChargeReceiver {
-    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(3, ItemStack.EMPTY);
+    // Changed to 2 slots: input and output only
+    private final DefaultedList<ItemStack> inventory = DefaultedList.ofSize(2, ItemStack.EMPTY);
 
-    // Input slot, output slot, and optional upgrade slot
+    // Updated slot indices
     public static final int INPUT_SLOT = 0;
     public static final int OUTPUT_SLOT = 1;
-    public static final int UPGRADE_SLOT = 2;
+    // Removed UPGRADE_SLOT as it's no longer needed
 
     // Energy storage
     private int honeyCharge = 0;
@@ -163,13 +164,11 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
         boolean wasActive = entity.honeyChargeBurnTime > 0;
         boolean changed = false;
 
-
         if (canSmelt(entity) && entity.honeyCharge >= entity.honeyChargePerOperation && entity.honeyChargeBurnTime <= 0) {
             entity.honeyCharge -= entity.honeyChargePerOperation;
             entity.honeyChargeBurnTime = 40;
             changed = true;
         }
-
 
         // Process smelting if we have burn time
         if (entity.honeyChargeBurnTime > 0) {

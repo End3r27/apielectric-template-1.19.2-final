@@ -1,6 +1,8 @@
 package end3r.apielectric.registry;
 
 import end3r.apielectric.ApiElectric;
+import end3r.apielectric.item.TooltipItem;
+import end3r.apielectric.item.TooltipBlockItem;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
@@ -9,10 +11,10 @@ import net.minecraft.util.registry.Registry;
 public class ModItems {
 
     // Declare custom items
-    public static final Item HONEY_JAR = new Item(new Item.Settings());
-    public static final Item ENERGY_BEE_SPAWN_EGG = new SpawnEggItem(
-            ModEntities.ENERGY_BEE, 0xfcd734, 0x463b1e,
+    public static final Item HONEY_JAR = new TooltipItem("honey_jar", new Item.Settings());
+    public static final Item ENERGY_BEE_SPAWN_EGG = new TooltipItem("energy_bee_spawn_egg",
             new Item.Settings());
+
     // 🟡 Custom Creative Tab (Move this after the items are registered)
     public static ItemGroup APIELECTRIC_GROUP;
 
@@ -20,6 +22,7 @@ public class ModItems {
         // Register items
         Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "honey_jar"), HONEY_JAR);
         Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "energy_bee_spawn_egg"), ENERGY_BEE_SPAWN_EGG);
+
 
         // 🟡 Now initialize the creative tab after registration
         APIELECTRIC_GROUP = FabricItemGroupBuilder.create(
@@ -37,5 +40,4 @@ public class ModItems {
                 })
                 .build();
     }
-
 }

@@ -11,7 +11,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class HoneyChargeFurnaceScreen extends HandledScreen<HoneyChargeFurnaceScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier(ApiElectric.MOD_ID, "apielectric:textures/gui/container/honey_charge_furnace_gui.png");
+    private static final Identifier TEXTURE = new Identifier(ApiElectric.MOD_ID, "textures/gui/container/honey_charge_furnace_gui.png");
     private int x;
     private int y;
 
@@ -41,9 +41,15 @@ public class HoneyChargeFurnaceScreen extends HandledScreen<HoneyChargeFurnaceSc
             drawTexture(matrices, x + 79, y + 34, 176, 14, progress + 1, 16);
         }
 
-        // Draw energy bar
+        // Draw energy bar background (black)
+        fill(matrices, x + 32, y + 20, x + 44, y + 70, 0xFF000000);
+
+        // Draw energy bar (yellow)
         int energy = handler.getScaledHoneyCharge();
-        drawTexture(matrices, x + 32, y + 70 - energy, 176, 31 + (50 - energy), 12, energy);
+        if (energy > 0) {
+            // Yellow color for honey charge (0xFFFFDD00 = yellow with full opacity)
+            fill(matrices, x + 33, y + 69 - energy, x + 43, y + 69, 0xFFFFDD00);
+        }
     }
 
     @Override
