@@ -11,6 +11,7 @@ import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.util.math.BlockPos;
@@ -50,4 +51,11 @@ public class HoneyChargeConduitBlock extends BlockWithEntity {
         return checkType(type, ModBlockEntities.HONEY_CHARGE_CONDUIT_BLOCK_ENTITY,
                 (world1, pos, state1, be) -> HoneyChargeConduitBlockEntity.tick(world1, pos, state1, be));
     }
+
+    @Override
+    public java.util.List<ItemStack> getDroppedStacks(BlockState state, net.minecraft.loot.context.LootContext.Builder builder) {
+        // Use vanilla drop behavior
+        return super.getDroppedStacks(state, builder);
+    }
+
 }

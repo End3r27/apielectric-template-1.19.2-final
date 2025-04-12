@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "OWO",
+    "WHW",
+    "OWO"
+  ],
+  "key": {
+    "O": {
+      "item": "minecraft:obsidian"
+    },
+    "W": {
+      "item": "minecraft:honeycomb"
+    },
+    "H": {
+      "item": "minecraft:honey_block"
+    }
+  },
+  "result": {
+    "item": "apielectric:wax_infused_shielding",
+    "count": 1
+  }
+}

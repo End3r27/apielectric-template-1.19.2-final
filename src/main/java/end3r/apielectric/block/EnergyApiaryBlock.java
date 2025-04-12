@@ -1,5 +1,6 @@
 package end3r.apielectric.block;
 
+import end3r.apielectric.block.entity.BaseHoneyChargeBlockEntity;
 import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
 import end3r.apielectric.registry.ModBlockEntities;
 import net.minecraft.block.BlockWithEntity;  // Changed from 'Block'
@@ -25,7 +26,7 @@ public class EnergyApiaryBlock extends BlockWithEntity {  // Changed from 'Block
     @Override
     public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
         // Return a new instance of EnergyApiaryBlockEntity
-        return new EnergyApiaryBlockEntity(pos, state);
+        return new BaseHoneyChargeBlockEntity(pos, state);
     }
 
     @Override

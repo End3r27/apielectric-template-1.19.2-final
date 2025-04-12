@@ -48,5 +48,13 @@
 
   "block.apielectric.energy_bee_spawner": "Energy Bee Spawner",
   "tooltip.apielectric.energy_bee_spawner": "Automatically spawns Energy Bees in the area.",
-  "tooltip.apielectric.energy_bee_spawner.advanced": "Spawns Energy Bees every minute to a maximum of 10 bees within a 10-block radius. Right-click to check the current number of bees in range."
+  "tooltip.apielectric.energy_bee_spawner.advanced": "Spawns Energy Bees every minute to a maximum of 10 bees within a 10-block radius. Right-click to check the current number of bees in range.",
+
+  "block.apielectric.techno_hive": "TechnoHive",
+  "item.apielectric.energized_frame": "Energized Frame",
+  "item.apielectric.wax_infused_shielding": "Wax-Infused Shielding",
+  "item.apielectric.apiary_capacitor": "Apiary Capacitor",
+  "container.apielectric.techno_hive": "TechnoHive",
+  "tooltip.apielectric.techno_hive.honey_charge": "HoneyCharge: %d / %d"
+
 }

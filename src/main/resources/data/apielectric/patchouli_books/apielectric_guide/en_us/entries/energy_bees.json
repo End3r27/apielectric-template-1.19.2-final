@@ -1,0 +1,39 @@
+{
+  "name": "Energy Bees",
+  "icon": "apielectric:energy_bee_spawn_egg",
+  "category": "apielectric:stages",
+  "sortnum": 2,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Energy Bees are the foundation of the ApiElectric system. These specialized bees have evolved to collect and process energy rather than pollen and nectar.$(br2)With their distinctive golden glow, Energy Bees transform charged pollen into HoneyCharge, a powerful energy source."
+    },
+    {
+      "type": "patchouli:entity",
+      "entity": "apielectric:energy_bee",
+      "scale": 1.0,
+      "text": "Energy Bees have a golden glow that intensifies when they're carrying charged pollen."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Spawning",
+      "text": "There are two ways to obtain Energy Bees:$(br)1. Use an Energy Bee Spawn Egg$(br)2. Place an Energy Bee Spawner, which will automatically spawn bees over time$(br2)Energy Bee Spawners are generally more efficient for maintaining a steady population."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Behavior",
+      "text": "Energy Bees will:$(br)- Seek out Energized Flowers$(br)- Collect charged pollen$(br)- Return to Energy Apiaries$(br)- Generate HoneyCharge$(br2)They have a limited range of about 20 blocks from their home apiary."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Energy Bee Spawner",
+      "text": "The Energy Bee Spawner will:$(br)- Spawn a new Energy Bee every 60 seconds$(br)- Maintain up to 10 bees within a 10-block radius$(br)- Require no additional resources or energy$(br2)Right-click the spawner to check how many bees are currently in range."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Crafting",
+      "recipe": "apielectric:energy_bee_spawner",
+      "text": "The Energy Bee Spawner is crafted with iron ingots and a honeycomb, making it an affordable early-game investment."
+    }
+  ]
+}

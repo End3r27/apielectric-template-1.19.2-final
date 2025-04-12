@@ -1,0 +1,38 @@
+{
+  "name": "HoneyCharge System",
+  "icon": "apielectric:honey_charge_conduit",
+  "category": "apielectric:stages",
+  "sortnum": 3,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "HoneyCharge (HC) is the energy system that powers all ApiElectric machines. This unique form of energy is measured in HoneyCharge Units (HCU) and is generated exclusively by Energy Bees.$(br2)Understanding how to generate, store, and transfer HoneyCharge is essential for advancing through the mod."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Generation",
+      "text": "HoneyCharge is generated when Energy Bees return to an Energy Apiary after visiting Energized Flowers. Each bee generates 5-10 HC per trip, and a fully operational apiary with 5 bees can generate up to 250 HC/minute."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Storage",
+      "text": "Several blocks can store HoneyCharge:$(br)- Energy Apiary: 5,000 HC$(br)- Comb Capacitor: 40,000 HC$(br)- Honey Charge Conduit: 2,000 HC$(br)- Honey Charge Furnace: 10,000 HC$(br)- Pollen Transducer: 20,000 HC"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Transfer",
+      "recipe": "apielectric:honey_charge_conduit",
+      "text": "Honey Charge Conduits are the primary method of transferring energy between machines. They can transfer up to 500 HCU/tick and will glow when active."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Usage",
+      "text": "HoneyCharge powers various machines:$(br)- Honey Charge Furnace: Faster smelting$(br)- Pollen Transducer: Converts HC to other energy types$(br)- More machines to be discovered..."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Checking Energy Levels",
+      "text": "To check the energy level of any HC-compatible block:$(br)1. Hold Shift while looking at the block$(br)2. The tooltip will show current charge level$(br)3. A colored progress bar indicates the percentage full$(br)- Green: >66%$(br)- Yellow: 33-66%$(br)- Red: <33%"
+    }
+  ]
+}

@@ -58,6 +58,7 @@ public class ModBlockEntities {
                             ModBlocks.ENERGY_BEE_SPAWNER).build()
             );
 
+
     public static void registerBlockEntities() {
         // Method kept for explicit initialization if needed
         ApiElectric.LOGGER.info("Registering Block Entities for " + ApiElectric.MOD_ID);

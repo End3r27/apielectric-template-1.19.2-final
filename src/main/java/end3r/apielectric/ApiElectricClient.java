@@ -36,4 +36,6 @@ public class ApiElectricClient implements ClientModInitializer {
         BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ENERGIZED_FLOWER, RenderLayer.getCutoutMipped());
         }
 
+
+
     }

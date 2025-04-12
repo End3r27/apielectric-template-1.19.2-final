@@ -1,0 +1,23 @@
+{
+  "name": "HoneyCharge Machines",
+  "icon": "apielectric:honey_charge_furnace",
+  "category": "apielectric:stages",
+  "sortnum": 4,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "ApiElectric includes several machines powered by HoneyCharge. Each serves a specific purpose in your bee-powered technology network.$(br2)This entry covers the basic machines you'll need to effectively utilize your HoneyCharge production."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Honey Charge Furnace",
+      "recipe": "apielectric:honey_charge_furnace",
+      "text": "The Honey Charge Furnace functions like a standard furnace but operates twice as fast when powered by HoneyCharge. It consumes 20 HC per operation."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Furnace Operation",
+      "text": "To use the Honey Charge Furnace:$(br)1. Connect it to your HoneyCharge network$(br)2. Insert items to be smelted$(br)3. The furnace will automatically use HC to process items$(br2)The furnace can hold up to 10,000 HC and will glow when operating."
+    }
+  ]
+}

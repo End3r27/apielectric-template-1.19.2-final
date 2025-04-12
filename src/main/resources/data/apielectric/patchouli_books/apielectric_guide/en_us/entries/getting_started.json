@@ -1,0 +1,57 @@
+{
+  "name": "Getting Started",
+  "icon": "apielectric:energy_bee_spawn_egg",
+  "category": "apielectric:stages",
+  "sortnum": 0,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "Welcome to ApiElectric! This mod allows you to harness the power of specialized Energy Bees to generate HoneyCharge (HC), a unique energy source that can power various machines.$(br2)In this guide, we'll walk you through setting up your first HoneyCharge farm and introduce you to the core mechanics."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "What is HoneyCharge?",
+      "text": "HoneyCharge (HC) is a special form of energy produced by Energy Bees. It's measured in HoneyCharge Units (HCU) and can be stored, transferred, and used to power different machines.$(br2)Unlike regular bees, Energy Bees produce electrical energy instead of honey, making them invaluable for powering your technological advancements."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Energy Bee Spawner",
+      "recipe": "apielectric:energy_bee_spawner",
+      "text": "The Energy Bee Spawner is your first step into bee-powered technology. It automatically spawns Energy Bees in the area (up to 10 bees within a 10-block radius)."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Energized Flower",
+      "recipe": "apielectric:energized_flower",
+      "text": "Energy Bees are attracted to Energized Flowers. Plant these around your apiary to keep your bees happy and productive. Bees will collect charged pollen from these flowers."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Energy Apiary",
+      "recipe": "apielectric:energy_apiary",
+      "text": "The Energy Apiary houses Energy Bees and converts their activities into HoneyCharge. Place this block near Energized Flowers for maximum efficiency."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Basic Setup",
+      "text": "For your first HoneyCharge farm, follow these steps:$(br)1. Craft an Energy Bee Spawner and place it in an open area$(br)2. Plant several Energized Flowers nearby$(br)3. Place an Energy Apiary near the flowers$(br)4. Wait for bees to populate and begin generating HoneyCharge"
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Honey Charge Conduit",
+      "recipe": "apielectric:honey_charge_conduit",
+      "text": "Once your apiary is generating HoneyCharge, use Honey Charge Conduits to transfer energy between machines. These conduits can transfer up to 500 HCU/tick."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Honey Charge Furnace",
+      "recipe": "apielectric:honey_charge_furnace",
+      "text": "The Honey Charge Furnace is one of the simplest machines that uses HoneyCharge. It works like a standard furnace but is faster and uses HoneyCharge instead of fuel."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Next Steps",
+      "text": "Now that you have a basic HoneyCharge farm, explore the other entries to learn about:$(br)- Scaling up production with multiple apiaries$(br)- Storing large amounts of energy with Comb Capacitors$(br)- Converting HoneyCharge to other mod energy systems$(br)- Advanced automation techniques"
+    }
+  ]
+}

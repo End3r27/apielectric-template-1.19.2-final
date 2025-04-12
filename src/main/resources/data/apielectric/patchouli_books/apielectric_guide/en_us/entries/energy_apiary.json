@@ -1,0 +1,38 @@
+{
+  "name": "Energy Apiary",
+  "icon": "apielectric:energy_apiary",
+  "category": "apielectric:stages",
+  "sortnum": 1,
+  "pages": [
+    {
+      "type": "patchouli:text",
+      "text": "The Energy Apiary is the heart of your HoneyCharge production system. This specialized apiary houses Energy Bees and converts their activity into usable HoneyCharge.$(br2)Unlike regular apiaries, the Energy Apiary can only accept Energy Bees and produces electrical energy instead of honey products."
+    },
+    {
+      "type": "patchouli:crafting",
+      "title": "Crafting",
+      "recipe": "apielectric:energy_apiary",
+      "text": "The Energy Apiary is crafted with oak planks and a honeycomb, making it relatively easy to acquire early in your game."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Operation",
+      "text": "When placed near Energized Flowers, Energy Bees will:$(br)1. Leave the apiary to visit flowers$(br)2. Collect charged pollen$(br)3. Return to the apiary$(br)4. Generate HoneyCharge (HC)$(br2)Each bee generates approximately 5-10 HC per trip."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Technical Details",
+      "text": "The Energy Apiary can:$(br)- Store up to 5,000 HC internally$(br)- Output 100 HC/tick to adjacent conduits$(br)- House up to 5 Energy Bees simultaneously$(br2)For optimal performance, ensure there are at least 3 Energized Flowers within a 10-block radius."
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Storage & Transfer",
+      "text": "When an Energy Apiary fills with HoneyCharge, it will:$(br)1. Stop producing more energy until some is used$(br)2. Automatically output to connected Honey Charge Conduits$(br)3. Display its charge level when examined with Shift"
+    },
+    {
+      "type": "patchouli:text",
+      "title": "Scaling Up",
+      "text": "To increase your HoneyCharge production:$(br)- Place multiple apiaries near each other$(br)- Ensure plenty of Energized Flowers nearby$(br)- Use an Energy Bee Spawner to maintain bee population$(br)- Connect all apiaries with Honey Charge Conduits$(br)- Use Comb Capacitors for energy storage"
+    }
+  ]
+}
