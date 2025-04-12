@@ -62,8 +62,18 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
         // Reset cooldown for next tick
         entity.transferCooldown = TRANSFER_COOLDOWN_MAX;
 
-        // Try to transfer energy
-        boolean isTransferring = entity.transferEnergyNetwork(world, pos);
+        // Check if the conduit is part of a valid network (has both providers and receivers)
+        Set<BlockPos> visitedBlocks = new HashSet<>();
+        List<BlockPos> providers = new ArrayList<>();
+        List<BlockPos> receivers = new ArrayList<>();
+
+        entity.findEnergyComponentsInNetwork(world, pos, visitedBlocks, providers, receivers);
+
+        // Only allow the conduit to work if connecting at least one provider and one receiver
+        boolean isValidNetwork = !providers.isEmpty() && !receivers.isEmpty();
+
+        // Try to transfer energy only if the network is valid
+        boolean isTransferring = isValidNetwork && entity.transferEnergyNetwork(world, pos, providers, receivers);
 
         // Update block state if transfer status changed
         boolean currentlyActive = state.get(HoneyChargeConduitBlock.ACTIVE);
@@ -82,6 +92,11 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
             }
             entity.wasActive = isTransferring;
         }
+        // Deactivate if not a valid network
+        else if (!isValidNetwork && currentlyActive) {
+            entity.deactivateAllConduits(world, pos);
+            entity.wasActive = false;
+        }
 
         // Add particles while active
         if (isTransferring && entity.energyBuffer > 0) {
@@ -95,6 +110,14 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
     private void activateAllConduits(World world, BlockPos pos) {
         Set<BlockPos> visitedBlocks = new HashSet<>();
         activateConnectedConduits(world, pos, visitedBlocks);
+    }
+
+    /**
+     * Deactivates all conduits in the network
+     */
+    private void deactivateAllConduits(World world, BlockPos pos) {
+        Set<BlockPos> visitedBlocks = new HashSet<>();
+        deactivateConnectedConduits(world, pos, visitedBlocks);
     }
 
     /**
@@ -123,22 +146,47 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
     }
 
     /**
+     * Recursively deactivates all connected conduits
+     */
+    private void deactivateConnectedConduits(World world, BlockPos centerPos, Set<BlockPos> visitedBlocks) {
+        if (visitedBlocks.contains(centerPos)) return;
+        visitedBlocks.add(centerPos);
+
+        // Deactivate this conduit
+        BlockState state = world.getBlockState(centerPos);
+        if (state.getBlock() instanceof HoneyChargeConduitBlock && state.get(HoneyChargeConduitBlock.ACTIVE)) {
+            world.setBlockState(centerPos, state.with(HoneyChargeConduitBlock.ACTIVE, false));
+        }
+
+        // Look for connected conduits
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = centerPos.offset(direction);
+            BlockEntity neighborEntity = world.getBlockEntity(neighborPos);
+
+            // If it's another conduit, deactivate it too
+            if (neighborEntity instanceof HoneyChargeConduitBlockEntity) {
+                deactivateConnectedConduits(world, neighborPos, visitedBlocks);
+            }
+        }
+    }
+
+    /**
      * Transfers energy between connected blocks in the network
      * @return true if any energy was transferred
      */
-    private boolean transferEnergyNetwork(World world, BlockPos pos) {
+    private boolean transferEnergyNetwork(World world, BlockPos pos, List<BlockPos> providers, List<BlockPos> receivers) {
         // If there's energy in the buffer, try to distribute it first
         if (energyBuffer > 0) {
-            return distributeBufferedEnergy(world, pos);
+            return distributeBufferedEnergy(world, receivers);
         }
 
-        // Find all providers and extract energy into the buffer
-        boolean extracted = extractFromProviders(world, pos);
+        // Extract energy from providers into the buffer
+        boolean extracted = extractFromProviders(world, providers);
 
         // Try to distribute the buffer immediately
         boolean distributed = false;
         if (energyBuffer > 0) {
-            distributed = distributeBufferedEnergy(world, pos);
+            distributed = distributeBufferedEnergy(world, receivers);
         }
 
         return extracted || distributed;
@@ -147,13 +195,7 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
     /**
      * Find all energy providers in the network and extract energy
      */
-    private boolean extractFromProviders(World world, BlockPos pos) {
-        Set<BlockPos> visitedBlocks = new HashSet<>();
-        List<BlockPos> providerPositions = new ArrayList<>();
-
-        // Find all providers connected through the conduit network
-        findProvidersInNetwork(world, pos, visitedBlocks, providerPositions);
-
+    private boolean extractFromProviders(World world, List<BlockPos> providerPositions) {
         boolean extracted = false;
 
         // Extract energy from each provider
@@ -187,14 +229,8 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
     /**
      * Distribute buffered energy to all receivers in the network
      */
-    private boolean distributeBufferedEnergy(World world, BlockPos pos) {
+    private boolean distributeBufferedEnergy(World world, List<BlockPos> receiverPositions) {
         if (energyBuffer <= 0) return false;
-
-        Set<BlockPos> visitedBlocks = new HashSet<>();
-        List<BlockPos> receiverPositions = new ArrayList<>();
-
-        // Find all receivers connected through the conduit network
-        findReceiversInNetwork(world, pos, visitedBlocks, receiverPositions);
 
         if (receiverPositions.isEmpty()) return false;
 
@@ -238,9 +274,10 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
     }
 
     /**
-     * Recursively finds all providers in the connected network
+     * Finds all energy components (providers and receivers) in the connected network
      */
-    private void findProvidersInNetwork(World world, BlockPos centerPos, Set<BlockPos> visitedBlocks, List<BlockPos> providers) {
+    private void findEnergyComponentsInNetwork(World world, BlockPos centerPos, Set<BlockPos> visitedBlocks,
+                                               List<BlockPos> providers, List<BlockPos> receivers) {
         if (visitedBlocks.contains(centerPos)) return;
         visitedBlocks.add(centerPos);
 
@@ -249,49 +286,43 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
             BlockState neighborState = world.getBlockState(neighborPos);
             BlockEntity neighborEntity = world.getBlockEntity(neighborPos);
 
+            // Skip if already visited
+            if (visitedBlocks.contains(neighborPos)) continue;
+
             // Check if the neighbor is a provider
-            if ((neighborEntity instanceof BaseHoneyChargeBlockEntity) ||
+            if ((neighborEntity instanceof BaseHoneyChargeBlockEntity && isEnergyProvider(neighborEntity)) ||
                     (neighborState.getBlock() instanceof HoneyChargeProvider)) {
-                // Add to list if not already visited
-                if (!visitedBlocks.contains(neighborPos)) {
-                    providers.add(neighborPos);
-                    visitedBlocks.add(neighborPos);
-                }
+                providers.add(neighborPos);
+                visitedBlocks.add(neighborPos);
+            }
+            // Check if the neighbor is a receiver
+            else if ((neighborEntity instanceof HoneyChargeFurnaceBlockEntity) ||
+                    (neighborEntity instanceof BaseHoneyChargeBlockEntity && isEnergyReceiver(neighborEntity)) ||
+                    (neighborState.getBlock() instanceof HoneyChargeReceiver)) {
+                receivers.add(neighborPos);
+                visitedBlocks.add(neighborPos);
             }
             // If it's another conduit, traverse through it
             else if (neighborEntity instanceof HoneyChargeConduitBlockEntity) {
-                findProvidersInNetwork(world, neighborPos, visitedBlocks, providers);
+                findEnergyComponentsInNetwork(world, neighborPos, visitedBlocks, providers, receivers);
             }
         }
     }
 
     /**
-     * Recursively finds all receivers in the connected network
+     * Checks if the block entity is an energy provider
      */
-    private void findReceiversInNetwork(World world, BlockPos centerPos, Set<BlockPos> visitedBlocks, List<BlockPos> receivers) {
-        if (visitedBlocks.contains(centerPos)) return;
-        visitedBlocks.add(centerPos);
+    private boolean isEnergyProvider(BlockEntity entity) {
+        // EnergyApiary seems to be a provider based on previous code
+        return entity instanceof EnergyApiaryBlockEntity;
+    }
 
-        for (Direction direction : Direction.values()) {
-            BlockPos neighborPos = centerPos.offset(direction);
-            BlockState neighborState = world.getBlockState(neighborPos);
-            BlockEntity neighborEntity = world.getBlockEntity(neighborPos);
-
-            // Check if the neighbor is a receiver
-            if ((neighborEntity instanceof HoneyChargeFurnaceBlockEntity) ||
-                    (neighborEntity instanceof BaseHoneyChargeBlockEntity && !(neighborEntity instanceof EnergyApiaryBlockEntity)) ||
-                    (neighborState.getBlock() instanceof HoneyChargeReceiver)) {
-                // Add to list if not already visited and not a provider we already extracted from
-                if (!visitedBlocks.contains(neighborPos)) {
-                    receivers.add(neighborPos);
-                    visitedBlocks.add(neighborPos);
-                }
-            }
-            // If it's another conduit, traverse through it
-            else if (neighborEntity instanceof HoneyChargeConduitBlockEntity) {
-                findReceiversInNetwork(world, neighborPos, visitedBlocks, receivers);
-            }
-        }
+    /**
+     * Checks if the block entity is an energy receiver
+     */
+    private boolean isEnergyReceiver(BlockEntity entity) {
+        // BaseHoneyChargeBlockEntity that is not an EnergyApiaryBlockEntity
+        return entity instanceof BaseHoneyChargeBlockEntity && !(entity instanceof EnergyApiaryBlockEntity);
     }
 
     /**
