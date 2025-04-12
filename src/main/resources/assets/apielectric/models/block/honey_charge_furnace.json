@@ -1,0 +1,8 @@
+{
+  "parent": "block/orientable",
+  "textures": {
+    "top": "apielectric:block/honey_charge_furnace_top",
+    "front": "apielectric:block/honey_charge_furnace_front",
+    "side": "apielectric:block/honey_charge_furnace_side"
+  }
+}
