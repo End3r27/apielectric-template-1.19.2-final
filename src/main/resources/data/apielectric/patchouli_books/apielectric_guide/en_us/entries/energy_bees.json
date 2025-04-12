@@ -2,7 +2,7 @@
   "name": "Energy Bees",
   "icon": "apielectric:energy_bee_spawn_egg",
   "category": "apielectric:stages",
-  "sortnum": 2,
+  "sortnum": 3,
   "pages": [
     {
       "type": "patchouli:text",

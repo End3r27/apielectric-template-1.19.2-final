@@ -2,7 +2,7 @@
   "name": "Getting Started",
   "icon": "apielectric:energy_bee_spawn_egg",
   "category": "apielectric:stages",
-  "sortnum": 0,
+  "sortnum": 1,
   "pages": [
     {
       "type": "patchouli:text",

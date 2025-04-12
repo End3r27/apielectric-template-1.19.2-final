@@ -2,7 +2,7 @@
   "name": "HoneyCharge Machines",
   "icon": "apielectric:honey_charge_furnace",
   "category": "apielectric:stages",
-  "sortnum": 4,
+  "sortnum": 5,
   "pages": [
     {
       "type": "patchouli:text",

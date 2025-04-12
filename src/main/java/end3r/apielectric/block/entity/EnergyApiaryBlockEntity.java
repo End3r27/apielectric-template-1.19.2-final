@@ -29,9 +29,6 @@ public class EnergyApiaryBlockEntity extends BaseHoneyChargeBlockEntity {
         nbt.putInt("TransferCooldown", this.transferCooldown);
     }
 
-    public void tick(World world, BlockPos pos, BlockState state) {
-
-    }
 
     @Override
     public void readNbt(NbtCompound nbt) {
