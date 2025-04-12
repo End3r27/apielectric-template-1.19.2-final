@@ -32,6 +32,13 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
     private int energyBuffer = 0;
     private static final int MAX_BUFFER = 1000;
 
+    // Animation properties
+    private static final int PROPAGATION_DELAY = 3; // Ticks between conduit activations
+    private boolean pendingActivation = false;
+    private int activationTimer = 0;
+    private BlockPos energySourcePos = null; // The conduit that activated this one
+    private Direction energyFlowDirection = null; // Direction that energy is flowing
+
     public HoneyChargeConduitBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.HONEY_CHARGE_CONDUIT_BLOCK_ENTITY, pos, state);
     }
@@ -41,6 +48,20 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
         super.writeNbt(nbt);
         nbt.putInt("TransferCooldown", this.transferCooldown);
         nbt.putInt("EnergyBuffer", this.energyBuffer);
+        nbt.putBoolean("PendingActivation", this.pendingActivation);
+        nbt.putInt("ActivationTimer", this.activationTimer);
+
+        // Save source position if applicable
+        if (this.energySourcePos != null) {
+            nbt.putInt("SourcePosX", this.energySourcePos.getX());
+            nbt.putInt("SourcePosY", this.energySourcePos.getY());
+            nbt.putInt("SourcePosZ", this.energySourcePos.getZ());
+        }
+
+        // Save flow direction if applicable
+        if (this.energyFlowDirection != null) {
+            nbt.putInt("FlowDirection", this.energyFlowDirection.getId());
+        }
     }
 
     @Override
@@ -48,40 +69,173 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
         super.readNbt(nbt);
         this.transferCooldown = nbt.getInt("TransferCooldown");
         this.energyBuffer = nbt.getInt("EnergyBuffer");
+        this.pendingActivation = nbt.getBoolean("PendingActivation");
+        this.activationTimer = nbt.getInt("ActivationTimer");
+
+        // Restore source position if saved
+        if (nbt.contains("SourcePosX")) {
+            this.energySourcePos = new BlockPos(
+                    nbt.getInt("SourcePosX"),
+                    nbt.getInt("SourcePosY"),
+                    nbt.getInt("SourcePosZ")
+            );
+        }
+
+        // Restore flow direction if saved
+        if (nbt.contains("FlowDirection")) {
+            this.energyFlowDirection = Direction.byId(nbt.getInt("FlowDirection"));
+        }
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, HoneyChargeConduitBlockEntity entity) {
         if (world.isClient()) return;
 
-        // Decrement cooldown
+        // Handle activation propagation
+        if (entity.pendingActivation) {
+            entity.activationTimer--;
+            if (entity.activationTimer <= 0) {
+                // Time to activate!
+                entity.pendingActivation = false;
+                world.setBlockState(pos, state.with(HoneyChargeConduitBlock.ACTIVE, true));
+
+                // Play honey sound when activating
+                world.playSound(null, pos, SoundEvents.BLOCK_HONEY_BLOCK_SLIDE,
+                        SoundCategory.BLOCKS, 0.7F, 0.8F + world.getRandom().nextFloat() * 0.4F);
+
+                // Propagate activation to connected conduits
+                entity.propagateActivation(world, pos);
+
+                // Spawn particles
+                if (entity.energyBuffer > 0) {
+                    entity.spawnEnergyParticles((ServerWorld) world, pos);
+                }
+            }
+            return;
+        }
+
+        // Handle deactivation cooldown
         if (entity.transferCooldown > 0) {
             entity.transferCooldown--;
+
+            // If we're active but cooldown is about to expire, check if we should stay active
+            if (entity.transferCooldown == 0 && state.get(HoneyChargeConduitBlock.ACTIVE)) {
+                boolean shouldStayActive = entity.checkForActiveNeighbors(world, pos);
+                if (!shouldStayActive) {
+                    world.setBlockState(pos, state.with(HoneyChargeConduitBlock.ACTIVE, false));
+                    entity.wasActive = false;
+                    entity.energyFlowDirection = null;
+                }
+            }
             return;
         }
 
         // Reset cooldown for next tick
         entity.transferCooldown = TRANSFER_COOLDOWN_MAX;
 
-        // Try to transfer energy
+        // Try to transfer energy - only the first conduit in the network will do this
         boolean isTransferring = entity.transferEnergyNetwork(world, pos);
 
-        // Update block state if transfer status changed
-        boolean currentlyActive = state.get(HoneyChargeConduitBlock.ACTIVE);
-        if (isTransferring != currentlyActive) {
-            world.setBlockState(pos, state.with(HoneyChargeConduitBlock.ACTIVE, isTransferring));
+        // If we just started transferring, begin the activation wave
+        if (isTransferring && !state.get(HoneyChargeConduitBlock.ACTIVE)) {
+            world.setBlockState(pos, state.with(HoneyChargeConduitBlock.ACTIVE, true));
+            entity.wasActive = true;
 
             // Play honey sound when starting to transfer
-            if (isTransferring && !entity.wasActive) {
-                world.playSound(null, pos, SoundEvents.BLOCK_HONEY_BLOCK_SLIDE,
-                        SoundCategory.BLOCKS, 0.7F, 0.8F + world.getRandom().nextFloat() * 0.4F);
+            world.playSound(null, pos, SoundEvents.BLOCK_HONEY_BLOCK_SLIDE,
+                    SoundCategory.BLOCKS, 0.7F, 0.8F + world.getRandom().nextFloat() * 0.4F);
+
+            // Begin propagation from energy producer to receivers
+            entity.initializeEnergyFlow(world, pos);
+            entity.propagateActivation(world, pos);
+
+            // Spawn particles while active
+            if (entity.energyBuffer > 0) {
+                entity.spawnEnergyParticles((ServerWorld) world, pos);
             }
-            entity.wasActive = isTransferring;
+        }
+    }
+
+    /**
+     * Determine initial flow direction based on nearby providers and receivers
+     */
+    private void initializeEnergyFlow(World world, BlockPos pos) {
+        // First check for providers in immediate neighbors
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.offset(direction);
+            BlockEntity neighborEntity = world.getBlockEntity(neighborPos);
+            BlockState neighborState = world.getBlockState(neighborPos);
+
+            if ((neighborEntity instanceof BaseHoneyChargeBlockEntity &&
+                    !(neighborEntity instanceof HoneyChargeFurnaceBlockEntity)) ||
+                    (neighborState.getBlock() instanceof HoneyChargeProvider)) {
+                // We found a provider, set flow direction away from it
+                this.energyFlowDirection = direction.getOpposite();
+                return;
+            }
         }
 
-        // Add particles while active
-        if (isTransferring && entity.energyBuffer > 0) {
-            entity.spawnEnergyParticles((ServerWorld) world, pos);
+        // If no immediate provider, look for receivers
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.offset(direction);
+            BlockEntity neighborEntity = world.getBlockEntity(neighborPos);
+            BlockState neighborState = world.getBlockState(neighborPos);
+
+            if ((neighborEntity instanceof HoneyChargeFurnaceBlockEntity) ||
+                    (neighborState.getBlock() instanceof HoneyChargeReceiver)) {
+                // We found a receiver, set flow direction toward it
+                this.energyFlowDirection = direction;
+                return;
+            }
         }
+    }
+
+    /**
+     * Propagates activation to neighboring conduits with a delay
+     */
+    private void propagateActivation(World world, BlockPos sourcePos) {
+        for (Direction direction : Direction.values()) {
+            // If we have a flow direction, only propagate in that direction
+            if (this.energyFlowDirection != null && direction != this.energyFlowDirection) {
+                continue;
+            }
+
+            BlockPos neighborPos = pos.offset(direction);
+            // Don't propagate back to the source that activated us
+            if (sourcePos != null && neighborPos.equals(sourcePos)) continue;
+
+            BlockEntity neighborEntity = world.getBlockEntity(neighborPos);
+            if (neighborEntity instanceof HoneyChargeConduitBlockEntity neighborConduit) {
+                BlockState neighborState = world.getBlockState(neighborPos);
+
+                // Only schedule activation if it's not already active or pending activation
+                if (!neighborState.get(HoneyChargeConduitBlock.ACTIVE) && !neighborConduit.pendingActivation) {
+                    neighborConduit.pendingActivation = true;
+                    neighborConduit.activationTimer = PROPAGATION_DELAY;
+                    neighborConduit.energySourcePos = this.pos;
+
+                    // Pass along our flow direction
+                    if (this.energyFlowDirection != null) {
+                        neighborConduit.energyFlowDirection = this.energyFlowDirection;
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if any neighboring conduits are active
+     */
+    private boolean checkForActiveNeighbors(World world, BlockPos pos) {
+        for (Direction direction : Direction.values()) {
+            BlockPos neighborPos = pos.offset(direction);
+            BlockState neighborState = world.getBlockState(neighborPos);
+
+            if (neighborState.getBlock() instanceof HoneyChargeConduitBlock &&
+                    neighborState.get(HoneyChargeConduitBlock.ACTIVE)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -266,15 +420,37 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
         int particleCount = Math.max(1, Math.min(5, energyBuffer / 200));
 
         for (int i = 0; i < particleCount; i++) {
-            // Position particles within the block with some randomness
-            double x = pos.getX() + 0.3 + (random.nextFloat() * 0.4);
-            double y = pos.getY() + 0.3 + (random.nextFloat() * 0.4);
-            double z = pos.getZ() + 0.3 + (random.nextFloat() * 0.4);
+            double x, y, z, vx, vy, vz;
 
-            // Determine particle velocity (slight movement in random directions)
-            double vx = (random.nextFloat() - 0.5) * 0.05;
-            double vy = (random.nextFloat() - 0.5) * 0.05;
-            double vz = (random.nextFloat() - 0.5) * 0.05;
+            if (energyFlowDirection != null) {
+                // Position particles to show directional flow
+                // Start position - away from the direction we're flowing
+                double offset = 0.3 + (random.nextFloat() * 0.2);
+                x = pos.getX() + 0.5 - (energyFlowDirection.getOffsetX() * offset);
+                y = pos.getY() + 0.5 - (energyFlowDirection.getOffsetY() * offset);
+                z = pos.getZ() + 0.5 - (energyFlowDirection.getOffsetZ() * offset);
+
+                // Velocity - towards the direction we're flowing
+                double speed = 0.05 + (random.nextFloat() * 0.05);
+                vx = energyFlowDirection.getOffsetX() * speed;
+                vy = energyFlowDirection.getOffsetY() * speed;
+                vz = energyFlowDirection.getOffsetZ() * speed;
+
+                // Add some randomness to the velocity
+                vx += (random.nextFloat() - 0.5) * 0.02;
+                vy += (random.nextFloat() - 0.5) * 0.02;
+                vz += (random.nextFloat() - 0.5) * 0.02;
+            } else {
+                // Default non-directional particles
+                x = pos.getX() + 0.3 + (random.nextFloat() * 0.4);
+                y = pos.getY() + 0.3 + (random.nextFloat() * 0.4);
+                z = pos.getZ() + 0.3 + (random.nextFloat() * 0.4);
+
+                // Random velocity
+                vx = (random.nextFloat() - 0.5) * 0.05;
+                vy = (random.nextFloat() - 0.5) * 0.05;
+                vz = (random.nextFloat() - 0.5) * 0.05;
+            }
 
             // Use a mix of particles to create a honey-electric effect
             if (random.nextFloat() < 0.7) {
