@@ -1,6 +1,7 @@
 package end3r.apielectric.block.entity;
 
 import end3r.apielectric.ApiElectric;
+import end3r.apielectric.energy.HoneyChargeReceiver;
 import end3r.apielectric.registry.ModBlockEntities;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
@@ -82,13 +83,13 @@ public class EnergyApiaryBlockEntity extends BaseHoneyChargeBlockEntity {
         for (BlockPos adjacentPos : adjacentPositions) {
             BlockEntity adjacentEntity = world.getBlockEntity(adjacentPos);
 
-            // Check if the adjacent block can receive honey charge
-            if (adjacentEntity instanceof HoneyChargeFurnaceBlockEntity furnace) {
+            // Check if the adjacent block entity is a HoneyChargeReceiver
+            if (adjacentEntity instanceof HoneyChargeReceiver receiver) {
                 // Calculate how much we can actually transfer
                 int chargeToTransfer = Math.min(transferAmount, getStoredHoneyCharge());
                 if (chargeToTransfer > 0) {
                     // Transfer the charge
-                    furnace.receiveHoneyCharge(chargeToTransfer);
+                    receiver.receiveHoneyCharge(chargeToTransfer);
                     // Reduce our stored charge
                     consumeHoneyCharge(chargeToTransfer);
 

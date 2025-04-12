@@ -35,7 +35,6 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
     // Updated slot indices
     public static final int INPUT_SLOT = 0;
     public static final int OUTPUT_SLOT = 1;
-    // Removed UPGRADE_SLOT as it's no longer needed
 
     // Energy storage
     private int honeyCharge = 0;
@@ -47,6 +46,10 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
     private int progress = 0;
     private int maxProgress = 100;
     private int honeyChargeBurnTime = 0;
+
+    // A flag to check if we received energy this tick for visual effects
+    private boolean receivedEnergy = false;
+    private int energyReceivedThisTick = 0;
 
     public HoneyChargeFurnaceBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.HONEY_CHARGE_FURNACE_BLOCK_ENTITY, pos, state);
@@ -79,12 +82,38 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
         };
     }
 
+    /**
+     * Adds honey charge to the furnace
+     * @param amount The amount to add
+     */
     public void addHoneyCharge(int amount) {
-        this.honeyCharge = Math.min(honeyCharge + amount, maxHoneyCharge);
+        if (amount <= 0) return;
+
+        int spaceAvailable = maxHoneyCharge - honeyCharge;
+        int actualAmount = Math.min(amount, spaceAvailable);
+
+        if (actualAmount > 0) {
+            this.honeyCharge += actualAmount;
+            this.energyReceivedThisTick += actualAmount;
+            this.receivedEnergy = true;
+            markDirty();
+        }
     }
 
+    /**
+     * Gets the current honey charge
+     * @return Current honey charge level
+     */
     public int getHoneyCharge() {
         return honeyCharge;
+    }
+
+    /**
+     * Gets the maximum honey charge this furnace can store
+     * @return Maximum honey charge capacity
+     */
+    public int getMaxHoneyCharge() {
+        return maxHoneyCharge;
     }
 
     /**
@@ -146,40 +175,42 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
     }
 
     /**
-     * Implementation of HoneyChargeReceiver interface
+     * Implementation of HoneyChargeReceiver interface - accepts honey charge from any source
      * @param amount The amount of honey charge to receive
      */
     @Override
     public void receiveHoneyCharge(int amount) {
-        if (amount <= 0) return;
+        addHoneyCharge(amount);
+    }
 
-        // Limit to available space
-        int spaceAvailable = maxHoneyCharge - honeyCharge;
-        int actualAmount = Math.min(amount, spaceAvailable);
+    /**
+     * Displays visual effects for receiving honey charge
+     */
+    private void showEnergyReceivedEffects() {
+        if (world != null && !world.isClient && receivedEnergy && energyReceivedThisTick > 0) {
+            // Adjust particle count based on amount received
+            int particleCount = Math.min(5, 1 + (energyReceivedThisTick / 50));
 
-        if (actualAmount > 0) {
-            honeyCharge += actualAmount;
-            markDirty();
+            world.playSound(
+                    null,
+                    pos,
+                    SoundEvents.BLOCK_HONEY_BLOCK_PLACE,
+                    SoundCategory.BLOCKS,
+                    0.7f,
+                    1.2f
+            );
 
-            // Visual feedback when receiving charge
-            if (world != null && !world.isClient) {
-                world.playSound(
-                        null,
-                        pos,
-                        SoundEvents.BLOCK_HONEY_BLOCK_PLACE,
-                        SoundCategory.BLOCKS,
-                        0.7f,
-                        1.2f
-                );
+            ((ServerWorld) world).spawnParticles(
+                    ParticleTypes.ELECTRIC_SPARK,
+                    pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
+                    particleCount, // number of particles based on energy received
+                    0.2, 0.1, 0.2, // spread
+                    0.01 // speed
+            );
 
-                ((ServerWorld) world).spawnParticles(
-                        ParticleTypes.ELECTRIC_SPARK,
-                        pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
-                        3, // number of particles
-                        0.2, 0.1, 0.2, // spread
-                        0.01 // speed
-                );
-            }
+            // Reset flags for next tick
+            receivedEnergy = false;
+            energyReceivedThisTick = 0;
         }
     }
 
@@ -189,6 +220,10 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
         boolean wasActive = entity.honeyChargeBurnTime > 0;
         boolean changed = false;
 
+        // Show visual effects if we received energy
+        entity.showEnergyReceivedEffects();
+
+        // Start a new smelting operation if we have enough charge
         if (canSmelt(entity) && entity.honeyCharge >= entity.honeyChargePerOperation && entity.honeyChargeBurnTime <= 0) {
             entity.honeyCharge -= entity.honeyChargePerOperation;
             entity.honeyChargeBurnTime = 40;

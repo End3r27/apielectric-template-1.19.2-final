@@ -58,16 +58,26 @@ public class CombCapacitorBlockEntity extends BaseHoneyChargeBlockEntity {
         for (BlockPos adjacentPos : adjacentPositions) {
             BlockEntity adjacentEntity = world.getBlockEntity(adjacentPos);
 
-            // Check if the adjacent block can receive honey charge
-            if (adjacentEntity instanceof HoneyChargeFurnaceBlockEntity furnace) {
-                // Calculate how much we can actually transfer
+            // Check for all types of receivers
+            if (adjacentEntity != null) {
                 int chargeToTransfer = Math.min(transferAmount, getStoredHoneyCharge());
                 if (chargeToTransfer > 0) {
-                    // Transfer the charge
-                    furnace.receiveHoneyCharge(chargeToTransfer);
-                    // Reduce our stored charge
-                    consumeHoneyCharge(chargeToTransfer);
-                    didTransfer = true;
+                    if (adjacentEntity instanceof HoneyChargeFurnaceBlockEntity furnace) {
+                        // Transfer to furnace
+                        furnace.receiveHoneyCharge(chargeToTransfer);
+                        consumeHoneyCharge(chargeToTransfer);
+                        didTransfer = true;
+                    } else if (adjacentEntity instanceof HoneyChargeReceiver receiver) {
+                        // Transfer to any HoneyChargeReceiver
+                        receiver.receiveHoneyCharge(chargeToTransfer);
+                        consumeHoneyCharge(chargeToTransfer);
+                        didTransfer = true;
+                    } else if (adjacentEntity.getCachedState().getBlock() instanceof HoneyChargeReceiver blockReceiver) {
+                        // Transfer to blocks implementing HoneyChargeReceiver
+                        blockReceiver.receiveHoneyCharge(chargeToTransfer);
+                        consumeHoneyCharge(chargeToTransfer);
+                        didTransfer = true;
+                    }
                 }
             }
         }
