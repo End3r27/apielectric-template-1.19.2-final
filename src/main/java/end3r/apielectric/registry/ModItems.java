@@ -11,8 +11,11 @@ public class ModItems {
 
     // Declare custom items
     public static final Item HONEY_JAR = new TooltipItem("honey_jar", new Item.Settings());
-    public static final Item ENERGY_BEE_SPAWN_EGG = new TooltipItem("energy_bee_spawn_egg",
-            new Item.Settings());
+    public static final Item ENERGY_BEE_SPAWN_EGG = new SpawnEggItem(
+            ModEntities.ENERGY_BEE,
+            0xFFD700, // Primary color (gold)
+            0xE6E6FA, // Secondary color (light purple)
+            new Item.Settings().group(ModItems.APIELECTRIC_GROUP));
 
     // 🟡 Custom Creative Tab (Move this after the items are registered)
     public static ItemGroup APIELECTRIC_GROUP;

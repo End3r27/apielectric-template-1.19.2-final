@@ -1,5 +1,12 @@
 {
   "variants": {
-    "": { "model": "apielectric:block/energy_apiary" }
+    "facing=north,lit=false": { "model": "apielectric:block/energy_apiary_furnace" },
+    "facing=south,lit=false": { "model": "apielectric:block/energy_apiary_furnace", "y": 180 },
+    "facing=west,lit=false": { "model": "apielectric:block/energy_apiary_furnace", "y": 270 },
+    "facing=east,lit=false": { "model": "apielectric:block/energy_apiary_furnace", "y": 90 },
+    "facing=north,lit=true": { "model": "apielectric:block/energy_apiary_furnace_active" },
+    "facing=south,lit=true": { "model": "apielectric:block/energy_apiary_furnace_active", "y": 180 },
+    "facing=west,lit=true": { "model": "apielectric:block/energy_apiary_furnace_active", "y": 270 },
+    "facing=east,lit=true": { "model": "apielectric:block/energy_apiary_furnace_active", "y": 90 }
   }
 }
