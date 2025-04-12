@@ -22,11 +22,6 @@ public class ModBlockEntities {
             BlockEntityType.Builder.create(CombCapacitorBlockEntity::new, ModBlocks.COMB_CAPACITOR).build(null)
     );
 
-    public static final BlockEntityType<PollenTransducerBlockEntity> POLLEN_TRANS_ENTITY = Registry.register(
-            Registry.BLOCK_ENTITY_TYPE,
-            new Identifier(ApiElectric.MOD_ID, "pollen_transducer"),
-            BlockEntityType.Builder.create(PollenTransducerBlockEntity::new, ModBlocks.POLLEN_TRANSDUCER).build(null)
-    );
 
     public static final BlockEntityType<BaseHoneyChargeBlockEntity> BASE_HONEY_CHARGE_BLOCK_ENTITY =
             Registry.register(

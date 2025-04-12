@@ -3,10 +3,7 @@ package end3r.apielectric.block;
 import end3r.apielectric.block.entity.CombCapacitorBlockEntity;
 import end3r.apielectric.block.entity.EnergyApiaryBlockEntity;
 import end3r.apielectric.registry.ModBlockEntities;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.BlockWithEntity;
+import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityTicker;
 import net.minecraft.block.entity.BlockEntityType;
@@ -64,6 +61,11 @@ public class CombCapacitorBlock extends BlockWithEntity implements BlockEntityPr
                 apiaryEntity.setStoredHoneyCharge(storedCharge);
             }
         }
+    }
+    @Override
+    public BlockRenderType getRenderType(BlockState state) {
+        // Use SOLID instead of the default MODEL to make the block visible
+        return BlockRenderType.MODEL;
     }
 
 }

@@ -10,7 +10,6 @@ import net.minecraft.util.registry.Registry;
 public class ModItems {
 
     // Declare custom items
-    public static final Item HONEY_JAR = new TooltipItem("honey_jar", new Item.Settings());
     public static final Item ENERGY_BEE_SPAWN_EGG = new SpawnEggItem(
             ModEntities.ENERGY_BEE,
             0xFFD700, // Primary color (gold)
@@ -22,7 +21,6 @@ public class ModItems {
 
     public static void registerItems() {
         // Register items
-        Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "honey_jar"), HONEY_JAR);
         Registry.register(Registry.ITEM, new Identifier(ApiElectric.MOD_ID, "energy_bee_spawn_egg"), ENERGY_BEE_SPAWN_EGG);
 
 
@@ -31,11 +29,8 @@ public class ModItems {
                         new Identifier("apielectric", "group"))
                 .icon(() -> new ItemStack(ENERGY_BEE_SPAWN_EGG))
                 .appendItems(stacks -> {
-                    stacks.add(new ItemStack(HONEY_JAR));
                     stacks.add(new ItemStack(ENERGY_BEE_SPAWN_EGG));
-                    stacks.add(new ItemStack(ModBlocks.COMB_CAPACITOR));
                     stacks.add(new ItemStack(ModBlocks.ENERGY_APIARY));
-                    stacks.add(new ItemStack(ModBlocks.POLLEN_TRANSDUCER));
                     stacks.add(new ItemStack(ModBlocks.ENERGIZED_FLOWER));
                     stacks.add(new ItemStack(ModBlocks.HONEY_CHARGE_CONDUIT));
                     stacks.add(new ItemStack(ModBlocks.HONEY_CHARGE_FURNACE));

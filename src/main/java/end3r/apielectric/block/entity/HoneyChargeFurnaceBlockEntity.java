@@ -87,6 +87,31 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
         return honeyCharge;
     }
 
+    /**
+     * Sets the honey charge to the specified amount
+     * @param amount The amount to set the honey charge to
+     */
+    public void setHoneyCharge(int amount) {
+        this.honeyCharge = Math.max(0, Math.min(amount, maxHoneyCharge));
+        markDirty();
+    }
+
+    /**
+     * Writes inventory data to an NBT compound
+     * @param nbt The NBT compound to write to
+     */
+    public void writeInventory(NbtCompound nbt) {
+        Inventories.writeNbt(nbt, inventory);
+    }
+
+    /**
+     * Reads inventory data from an NBT compound
+     * @param nbt The NBT compound to read from
+     */
+    public void readInventory(NbtCompound nbt) {
+        Inventories.readNbt(nbt, inventory);
+    }
+
     @Override
     public DefaultedList<ItemStack> getItems() {
         return inventory;
