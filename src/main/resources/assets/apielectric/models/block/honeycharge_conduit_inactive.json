@@ -1,6 +1,0 @@
-{
-  "parent": "block/cube",
-  "textures": {
-    "all": "apielectric:block/honeycharge_conduit_inactive"
-  }
-}

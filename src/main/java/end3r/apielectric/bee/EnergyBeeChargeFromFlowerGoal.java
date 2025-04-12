@@ -42,8 +42,6 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
         // Don't start if bee is maxed on energy or not on ground
         if (bee.getStoredEnergy() >= bee.getMaxStoredEnergy() || failedPollinationAttempts >= MAX_FAILED_ATTEMPTS) {
             if (bee.getWorld().getTime() % 100 == 0) {
-                ApiElectric.LOGGER.info("[BeeDebug] Cannot start: " +
-                        (bee.getStoredEnergy() >= bee.getMaxStoredEnergy() ? "Energy maxed" : "Too many failed attempts"));
             }
             return false;
         }
@@ -52,13 +50,11 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
         if (searchCooldown > 0) {
             searchCooldown--;
             if (searchCooldown == 0) {
-                ApiElectric.LOGGER.info("[BeeDebug] Search cooldown finished, will search for flowers");
             }
             return false;
         }
 
         // Try to find a flower
-        ApiElectric.LOGGER.info("[BeeDebug] Searching for energized flowers...");
         Optional<BlockPos> flower = findNearestFlower();
         if (flower.isPresent()) {
             targetFlowerPos = flower.get();
@@ -77,7 +73,6 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
         World world = bee.getWorld();
         BlockPos beePos = bee.getBlockPos();
 
-        ApiElectric.LOGGER.info("[BeeDebug] Scanning for flowers in range " + FLOWER_SEARCH_RANGE + " blocks from " + beePos);
 
         // Count the blocks with the right tag
         int foundBlocks = 0;
@@ -92,12 +87,10 @@ public class EnergyBeeChargeFromFlowerGoal extends Goal {
                 }
                 // Only log the first 5 to avoid spam
                 if (foundBlocks <= 5) {
-                    ApiElectric.LOGGER.info("[BeeDebug] Found energized flower at " + pos);
                 }
             }
         }
 
-        ApiElectric.LOGGER.info("[BeeDebug] Found " + foundBlocks + " energized flowers in range");
 
         if (foundPos != null) {
             return Optional.of(foundPos);

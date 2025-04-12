@@ -163,12 +163,13 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
         boolean wasActive = entity.honeyChargeBurnTime > 0;
         boolean changed = false;
 
-        // If there's HoneyCharge, convert it to burn time
-        if (entity.honeyCharge >= entity.honeyChargePerOperation && entity.honeyChargeBurnTime <= 0) {
+
+        if (canSmelt(entity) && entity.honeyCharge >= entity.honeyChargePerOperation && entity.honeyChargeBurnTime <= 0) {
             entity.honeyCharge -= entity.honeyChargePerOperation;
-            entity.honeyChargeBurnTime = 40; // Each charge burst lasts for 40 ticks
+            entity.honeyChargeBurnTime = 40;
             changed = true;
         }
+
 
         // Process smelting if we have burn time
         if (entity.honeyChargeBurnTime > 0) {
