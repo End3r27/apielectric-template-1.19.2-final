@@ -2,7 +2,6 @@ package end3r.apielectric.registry;
 
 import end3r.apielectric.ApiElectric;
 import end3r.apielectric.item.TooltipItem;
-import end3r.apielectric.item.TooltipBlockItem;
 import net.fabricmc.fabric.api.client.itemgroup.FabricItemGroupBuilder;
 import net.minecraft.item.*;
 import net.minecraft.util.Identifier;
