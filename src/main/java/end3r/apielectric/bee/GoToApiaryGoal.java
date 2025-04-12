@@ -29,8 +29,6 @@ public class GoToApiaryGoal extends Goal {
 
         // Add debug output
         if (bee.getWorld().getTime() % 200 == 0) { // Log every 10 seconds roughly
-            ApiElectric.LOGGER.info("Energy Bee energy level: " + bee.getStoredEnergy() + "/" + bee.getMaxStoredEnergy() +
-                    " - Goal can start: " + energyCondition);
         }
 
         return energyCondition;
@@ -42,7 +40,6 @@ public class GoToApiaryGoal extends Goal {
         BlockPos beePos = bee.getBlockPos();
         targetApiary = null;
 
-        ApiElectric.LOGGER.info("Energy Bee starting search for apiary");
 
         // Search for nearby EnergyApiaryBlocks within a radius
         int radius = 30;
@@ -50,7 +47,6 @@ public class GoToApiaryGoal extends Goal {
             Block block = world.getBlockState(pos).getBlock();
             if (block == ModBlocks.ENERGY_APIARY) {
                 targetApiary = pos.toImmutable();
-                ApiElectric.LOGGER.info("Energy Bee found apiary at " + targetApiary);
                 break;
             }
         }
@@ -59,9 +55,7 @@ public class GoToApiaryGoal extends Goal {
         if (targetApiary != null) {
             Vec3d target = Vec3d.ofCenter(targetApiary);
             bee.getNavigation().startMovingTo(target.x, target.y, target.z, 1.0D);
-            ApiElectric.LOGGER.info("Energy Bee navigating to apiary at " + targetApiary);
         } else {
-            ApiElectric.LOGGER.info("Energy Bee could not find an apiary within range");
         }
     }
 
@@ -70,23 +64,19 @@ public class GoToApiaryGoal extends Goal {
         if (targetApiary == null) return;
 
         if (bee.getBlockPos().isWithinDistance(targetApiary, 2.0)) {
-            ApiElectric.LOGGER.info("Energy Bee reached apiary, attempting to deposit energy: " + bee.getStoredEnergy());
 
             BlockEntity be = bee.getWorld().getBlockEntity(targetApiary);
             if (be instanceof end3r.apielectric.block.entity.EnergyApiaryBlockEntity apiary) {
                 int toTransfer = bee.getStoredEnergy();
                 apiary.receiveEnergy(toTransfer); // Use receiveEnergy instead
                 bee.setStoredEnergy(0);
-                ApiElectric.LOGGER.info("Energy Bee successfully deposited " + toTransfer + " energy");
             } else {
-                ApiElectric.LOGGER.warn("Found block is not an Energy Apiary block entity!");
             }
             targetApiary = null;
         } else if (bee.getNavigation().isIdle() && targetApiary != null) {
             // If navigation stopped but we haven't reached the target, try again
             Vec3d target = Vec3d.ofCenter(targetApiary);
             bee.getNavigation().startMovingTo(target.x, target.y, target.z, 1.0D);
-            ApiElectric.LOGGER.info("Energy Bee navigation reset to apiary");
         }
     }
 
@@ -97,7 +87,6 @@ public class GoToApiaryGoal extends Goal {
 
     @Override
     public void stop() {
-        ApiElectric.LOGGER.info("Energy Bee stopped looking for apiary");
         targetApiary = null;
     }
 }
