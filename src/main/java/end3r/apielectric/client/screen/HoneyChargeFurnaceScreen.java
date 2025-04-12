@@ -11,7 +11,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class HoneyChargeFurnaceScreen extends HandledScreen<HoneyChargeFurnaceScreenHandler> {
-    private static final Identifier TEXTURE = new Identifier(ApiElectric.MOD_ID, "textures/gui/honey_charge_furnace_gui.png");
+    private static final Identifier TEXTURE = new Identifier(ApiElectric.MOD_ID, "apielectric:textures/gui/container/honey_charge_furnace_gui.png");
+    private int x;
+    private int y;
 
     public HoneyChargeFurnaceScreen(HoneyChargeFurnaceScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -29,8 +31,8 @@ public class HoneyChargeFurnaceScreen extends HandledScreen<HoneyChargeFurnaceSc
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.setShaderTexture(0, TEXTURE);
-        int x = (width - backgroundWidth) / 2;
-        int y = (height - backgroundHeight) / 2;
+        x = (width - backgroundWidth) / 2;
+        y = (height - backgroundHeight) / 2;
         drawTexture(matrices, x, y, 0, 0, backgroundWidth, backgroundHeight);
 
         // Draw progress arrow
