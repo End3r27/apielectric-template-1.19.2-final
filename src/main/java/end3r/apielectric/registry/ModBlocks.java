@@ -56,4 +56,5 @@ public class ModBlocks {
                 new TooltipBlockItem(block, tooltipKey, new Item.Settings().group(ModItems.APIELECTRIC_GROUP))
         );
     }
+
 }

@@ -1,5 +1,6 @@
 package end3r.apielectric.block;
 
+import end3r.apielectric.BlockEventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.particle.ParticleTypes;
@@ -38,5 +39,12 @@ public class EnergizedFlowerBlock extends Block {
     @Override
     public boolean isSideInvisible(BlockState state, BlockState adjacentState, Direction direction) {
         return adjacentState.isOf(this);
+    }
+
+    @Override
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onBlockAdded(state, world, pos, oldState, notify);
+        // Call triggerRandomTick after block addition
+        BlockEventHandler.triggerRandomTick(world, pos);  // Triggering the effect here
     }
 }

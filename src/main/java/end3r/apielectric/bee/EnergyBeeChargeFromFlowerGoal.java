@@ -1,19 +1,13 @@
 package end3r.apielectric.bee;
 
-import end3r.apielectric.ApiElectric;
-import end3r.apielectric.registry.ModBlockTags;
 import end3r.apielectric.registry.ModBlocks;
 import net.minecraft.entity.ai.goal.Goal;
-import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
 import java.util.EnumSet;
-import java.util.Comparator;
 import java.util.Optional;
-import java.util.function.Predicate;
 
 public class EnergyBeeChargeFromFlowerGoal extends Goal {
     private final EnergyBeeEntity bee;

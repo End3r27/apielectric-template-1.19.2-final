@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.scoreboard.ScoreboardCriterion;
 
 @Environment(EnvType.CLIENT)
 public class ApiElectricClient implements ClientModInitializer {
@@ -30,5 +31,9 @@ public class ApiElectricClient implements ClientModInitializer {
                 ModScreenHandlers.HONEY_CHARGE_FURNACE_SCREEN_HANDLER,
                 HoneyChargeFurnaceScreen::new
         );
+
+        // Set the render type for your flower block to handle transparency
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.ENERGIZED_FLOWER, RenderLayer.getCutoutMipped());
+        }
+
     }
-}

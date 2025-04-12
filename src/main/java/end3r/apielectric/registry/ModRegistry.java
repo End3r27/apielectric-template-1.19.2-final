@@ -7,7 +7,6 @@ public class ModRegistry {
         ModEntities.register();
         ModItems.registerItems();
         ModBlockEntities.registerBlockEntities();
-        ModBlockTags.register();
     }
 
     public static void registerClient() {
