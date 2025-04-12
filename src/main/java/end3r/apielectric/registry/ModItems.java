@@ -58,9 +58,7 @@ public class ModItems {
                     stacks.add(new ItemStack(ModBlocks.HONEY_CHARGE_CONDUIT));
                     stacks.add(new ItemStack(ModBlocks.HONEY_CHARGE_FURNACE));
                     stacks.add(new ItemStack(ModBlocks.ENERGY_BEE_SPAWNER));
-                    stacks.add(new ItemStack(ModItems.ENERGIZED_FRAME));
-                    stacks.add(new ItemStack(ModItems.WAX_INFUSED_SHIELDING));
-                    stacks.add(new ItemStack(ModItems.APIARY_CAPACITOR));
+                    stacks.add(new ItemStack(ModBlocks.COMB_CAPACITOR));
 
 
 

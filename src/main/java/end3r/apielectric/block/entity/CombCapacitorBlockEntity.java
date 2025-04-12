@@ -1,4 +1,3 @@
-
 package end3r.apielectric.block.entity;
 
 import end3r.apielectric.energy.HoneyChargeReceiver;
@@ -39,23 +38,19 @@ public class CombCapacitorBlockEntity extends BaseHoneyChargeBlockEntity {
         this.transferCooldown = nbt.getInt("TransferCooldown");
     }
 
-
     /**
      * Transfers honey charge to adjacent blocks that can receive it
      */
     public void transferHoneyChargeToAdjacentBlocks() {
         if (world == null || world.isClient || getStoredHoneyCharge() <= 0) {
-            return;
+            return; // Don't run on client side or if we have no charge
         }
 
-        // Debug
-        if (world.getTime() % 100 == 0) {
-            System.out.println("Attempting to transfer from " + pos + " with charge: " + getStoredHoneyCharge());
-        }
-
+        // The amount of energy to transfer per block
         int transferAmount = 50;
         boolean didTransfer = false;
 
+        // Check all adjacent blocks
         BlockPos[] adjacentPositions = new BlockPos[] {
                 pos.north(), pos.south(), pos.east(), pos.west(), pos.up(), pos.down()
         };
@@ -63,15 +58,14 @@ public class CombCapacitorBlockEntity extends BaseHoneyChargeBlockEntity {
         for (BlockPos adjacentPos : adjacentPositions) {
             BlockEntity adjacentEntity = world.getBlockEntity(adjacentPos);
 
-            // Use the interface instead of the concrete class
-            if (adjacentEntity instanceof HoneyChargeReceiver receiver) {
+            // Check if the adjacent block can receive honey charge
+            if (adjacentEntity instanceof HoneyChargeFurnaceBlockEntity furnace) {
+                // Calculate how much we can actually transfer
                 int chargeToTransfer = Math.min(transferAmount, getStoredHoneyCharge());
                 if (chargeToTransfer > 0) {
-                    // Debug
-                    System.out.println("Found receiver at " + adjacentPos + ", transferring " + chargeToTransfer);
-
-                    // Transfer using the interface method
-                    receiver.receiveHoneyCharge(chargeToTransfer);
+                    // Transfer the charge
+                    furnace.receiveHoneyCharge(chargeToTransfer);
+                    // Reduce our stored charge
                     consumeHoneyCharge(chargeToTransfer);
                     didTransfer = true;
                 }
@@ -79,18 +73,22 @@ public class CombCapacitorBlockEntity extends BaseHoneyChargeBlockEntity {
         }
 
         if (didTransfer) {
-            // Visual and sound effects...
+            // Visual and sound effects
             ((ServerWorld) world).spawnParticles(
                     ParticleTypes.FALLING_HONEY,
                     pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
-                    5, 0.5, 0.5, 0.5, 0.01
+                    5, // count
+                    0.5, 0.5, 0.5, // offset
+                    0.01 // speed
             );
 
             world.playSound(
-                    null, pos,
+                    null, // No specific player
+                    pos,
                     SoundEvents.BLOCK_HONEY_BLOCK_SLIDE,
                     SoundCategory.BLOCKS,
-                    0.5f, 1.0f + world.getRandom().nextFloat() * 0.2f
+                    0.5f, // volume
+                    1.0f + world.getRandom().nextFloat() * 0.2f // pitch with variation
             );
 
             markDirty();
@@ -116,4 +114,3 @@ public class CombCapacitorBlockEntity extends BaseHoneyChargeBlockEntity {
         }
     }
 }
-
