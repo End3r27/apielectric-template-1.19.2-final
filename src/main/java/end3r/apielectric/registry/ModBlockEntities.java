@@ -44,7 +44,6 @@ public class ModBlockEntities {
                             ModBlocks.HONEY_CHARGE_CONDUIT).build()
             );
 
-    // Add to ModBlockEntities.java
     public static final BlockEntityType<HoneyChargeFurnaceBlockEntity> HONEY_CHARGE_FURNACE_BLOCK_ENTITY =
             Registry.register(
                     Registry.BLOCK_ENTITY_TYPE,
@@ -54,6 +53,15 @@ public class ModBlockEntities {
                             ModBlocks.HONEY_CHARGE_FURNACE).build()
             );
 
+    // New Energy Bee Spawner Block Entity
+    public static final BlockEntityType<EnergyBeeSpawnerBlockEntity> ENERGY_BEE_SPAWNER_ENTITY =
+            Registry.register(
+                    Registry.BLOCK_ENTITY_TYPE,
+                    new Identifier(ApiElectric.MOD_ID, "energy_bee_spawner"),
+                    FabricBlockEntityTypeBuilder.create(
+                            EnergyBeeSpawnerBlockEntity::new,
+                            ModBlocks.ENERGY_BEE_SPAWNER).build()
+            );
 
     public static void registerBlockEntities() {
         // Method kept for explicit initialization if needed

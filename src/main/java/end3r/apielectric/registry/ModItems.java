@@ -39,6 +39,7 @@ public class ModItems {
                     stacks.add(new ItemStack(ModBlocks.ENERGIZED_FLOWER));
                     stacks.add(new ItemStack(ModBlocks.HONEY_CHARGE_CONDUIT));
                     stacks.add(new ItemStack(ModBlocks.HONEY_CHARGE_FURNACE));
+                    stacks.add(new ItemStack(ModBlocks.ENERGY_BEE_SPAWNER)); // Add the new spawner to creative tab
                 })
                 .build();
     }

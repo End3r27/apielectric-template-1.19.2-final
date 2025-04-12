@@ -20,7 +20,15 @@ public class ModBlocks {
     public static final Block BASE_HONEY_CHARGE_BLOCK = new BaseHoneyChargeBlock(Block.Settings.of(net.minecraft.block.Material.WOOD));
     public static final Block ENERGIZED_FLOWER = new EnergizedFlowerBlock(FabricBlockSettings.copyOf(Blocks.DANDELION).nonOpaque().luminance(state -> 7)); // optional: emits light
     public static final Block HONEY_CHARGE_CONDUIT = new HoneyChargeConduitBlock(Block.Settings.of(Material.GLASS));
-    public static final Block HONEY_CHARGE_FURNACE = new HoneyChargeFurnaceBlock((Block.Settings.of(net.minecraft.block.Material.METAL)));
+    public static final Block HONEY_CHARGE_FURNACE = new HoneyChargeFurnaceBlock((Block.Settings.of(Material.STONE)));
+
+    // New Energy Bee Spawner block
+    public static final Block ENERGY_BEE_SPAWNER = new EnergyBeeSpawnerBlock(
+            Block.Settings.of(Material.WOOD )
+                    .strength(3.5f)       // Durability
+                    .requiresTool()       // Requires a pickaxe to mine
+                    .luminance(state -> 5) // Emits light level 5
+    );
 
     public static void registerBlocks() {
         // Register blocks
@@ -31,6 +39,7 @@ public class ModBlocks {
         Registry.register(Registry.BLOCK, new Identifier("apielectric", "energized_flower"), ENERGIZED_FLOWER);
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "honey_charge_conduit"), HONEY_CHARGE_CONDUIT);
         Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "honey_charge_furnace"), HONEY_CHARGE_FURNACE);
+        Registry.register(Registry.BLOCK, new Identifier(ApiElectric.MOD_ID, "energy_bee_spawner"), ENERGY_BEE_SPAWNER);
 
         // Register block items with tooltips
         registerBlockItem("energy_apiary", ENERGY_APIARY, "energy_apiary");
@@ -40,6 +49,7 @@ public class ModBlocks {
         registerBlockItem("energized_flower", ENERGIZED_FLOWER, "energized_flower");
         registerBlockItem("honey_charge_conduit", HONEY_CHARGE_CONDUIT, "honey_charge_conduit");
         registerBlockItem("honey_charge_furnace", HONEY_CHARGE_FURNACE, "honey_charge_furnace");
+        registerBlockItem("energy_bee_spawner", ENERGY_BEE_SPAWNER, "energy_bee_spawner");
     }
 
     /**
@@ -56,5 +66,4 @@ public class ModBlocks {
                 new TooltipBlockItem(block, tooltipKey, new Item.Settings().group(ModItems.APIELECTRIC_GROUP))
         );
     }
-
 }

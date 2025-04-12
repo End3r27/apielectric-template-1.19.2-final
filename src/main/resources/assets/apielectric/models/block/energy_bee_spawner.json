@@ -1,0 +1,6 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "all": "apielectric:block/energy_bee_spawner"
+  }
+}

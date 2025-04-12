@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "apielectric:block/energy_bee_spawner" }
+  }
+}

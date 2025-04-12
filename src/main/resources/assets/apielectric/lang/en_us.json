@@ -44,5 +44,9 @@
   "tooltip.apielectric.honey_jar.advanced": "Used in crafting recipes for ApiElectric machines.",
 
   "tooltip.apielectric.energy_bee_spawn_egg": "Spawns an Energy Bee.",
-  "tooltip.apielectric.energy_bee_spawn_egg.advanced": "Energy Bees produce HoneyCharge when housed in an Energy Apiary."
+  "tooltip.apielectric.energy_bee_spawn_egg.advanced": "Energy Bees produce HoneyCharge when housed in an Energy Apiary.",
+
+  "block.apielectric.energy_bee_spawner": "Energy Bee Spawner",
+  "tooltip.apielectric.energy_bee_spawner": "Automatically spawns Energy Bees in the area.",
+  "tooltip.apielectric.energy_bee_spawner.advanced": "Spawns Energy Bees every minute to a maximum of 10 bees within a 10-block radius. Right-click to check the current number of bees in range."
 }
