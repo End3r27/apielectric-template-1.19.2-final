@@ -39,7 +39,7 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
     // Energy storage
     private int honeyCharge = 0;
     private final int maxHoneyCharge = 10000;
-    private final int honeyChargePerOperation = 50;
+    private final int honeyChargePerOperation = 25;
 
     // Cooking properties
     protected final PropertyDelegate propertyDelegate;
@@ -176,11 +176,14 @@ public class HoneyChargeFurnaceBlockEntity extends BlockEntity implements NamedS
 
     /**
      * Implementation of HoneyChargeReceiver interface - accepts honey charge from any source
+     *
      * @param amount The amount of honey charge to receive
+     * @return
      */
     @Override
-    public void receiveHoneyCharge(int amount) {
+    public int receiveHoneyCharge(int amount) {
         addHoneyCharge(amount);
+        return amount;
     }
 
     /**

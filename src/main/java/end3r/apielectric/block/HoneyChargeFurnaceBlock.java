@@ -116,10 +116,11 @@ public class HoneyChargeFurnaceBlock extends BlockWithEntity implements HoneyCha
     }
 
     @Override
-    public void receiveHoneyCharge(int amount) {
+    public int receiveHoneyCharge(int amount) {
         // This method is required by the HoneyChargeReceiver interface
         // But the actual implementation is in the block entity
         // This method is never actually called - it's just here to satisfy the interface
+        return amount;
     }
 
     @Override

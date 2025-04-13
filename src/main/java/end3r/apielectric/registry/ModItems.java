@@ -58,7 +58,7 @@ public class ModItems {
                     stacks.add(new ItemStack(ModBlocks.HONEY_CHARGE_CONDUIT));
                     stacks.add(new ItemStack(ModBlocks.HONEY_CHARGE_FURNACE));
                     stacks.add(new ItemStack(ModBlocks.ENERGY_BEE_SPAWNER));
-                    stacks.add(new ItemStack(ModBlocks.COMB_CAPACITOR));
+                    // stacks.add(new ItemStack(ModBlocks.COMB_CAPACITOR)); currently not working!
 
 
 

@@ -66,15 +66,21 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
         Set<BlockPos> visitedBlocks = new HashSet<>();
         List<BlockPos> providers = new ArrayList<>();
         List<BlockPos> receivers = new ArrayList<>();
-        List<BlockPos> storageBlocks = new ArrayList<>(); // New list for storage blocks
+        List<BlockPos> storageBlocks = new ArrayList<>();
+        List<BlockPos> dedicatedProducers = new ArrayList<>();
 
-        entity.findEnergyComponentsInNetwork(world, pos, visitedBlocks, providers, receivers, storageBlocks);
+        entity.findEnergyComponentsInNetwork(world, pos, visitedBlocks, providers, receivers, storageBlocks, dedicatedProducers);
 
-        // Network is valid if there's at least one provider and one receiver
-        // OR if there are storage blocks with energy that can feed receivers
-        boolean hasValidProviders = !providers.isEmpty();
+        // Filter out EnergyApiary from receivers just to be absolutely certain
+        receivers.removeIf(receiverPos -> {
+            BlockEntity blockEntity = world.getBlockEntity(receiverPos);
+            return blockEntity instanceof EnergyApiaryBlockEntity;
+        });
+
+        // Network is valid if there's either a dedicated producer OR storage with energy, AND there are receivers
+        boolean hasValidProducers = !dedicatedProducers.isEmpty();
         boolean hasValidStorageWithEnergy = entity.checkStorageBlocksForEnergy(world, storageBlocks);
-        boolean isValidNetwork = (hasValidProviders || hasValidStorageWithEnergy) && !receivers.isEmpty();
+        boolean isValidNetwork = (hasValidProducers || hasValidStorageWithEnergy) && !receivers.isEmpty();
 
         // Try to transfer energy only if the network is valid
         boolean isTransferring = false;
@@ -105,8 +111,9 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
             }
             entity.wasActive = isTransferring;
         }
-        // Deactivate if not a valid network
-        else if (!isValidNetwork && currentlyActive) {
+        // Deactivate if not a valid network or if we've run out of energy
+        else if ((!isValidNetwork || (dedicatedProducers.isEmpty() && !entity.checkStorageBlocksForEnergy(world, storageBlocks)))
+                && currentlyActive) {
             entity.deactivateAllConduits(world, pos);
             entity.wasActive = false;
         }
@@ -234,25 +241,21 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
      */
     private boolean transferEnergyNetwork(World world, BlockPos pos, List<BlockPos> providers,
                                           List<BlockPos> receivers, List<BlockPos> storageBlocks) {
-        // Try to distribute buffered energy first
-        if (energyBuffer > 0) {
-            // First try filling storage blocks that aren't full
-            boolean storedSome = distributeToStorageBlocks(world, storageBlocks);
-
-            // Then send to receivers
-            boolean sentSome = distributeBufferedEnergy(world, receivers);
-
-            return storedSome || sentSome;
+        // Extract energy from providers into the buffer if needed
+        boolean extracted = false;
+        if (energyBuffer < TRANSFER_RATE) {
+            extracted = extractFromProviders(world, providers);
         }
 
-        // Extract energy from providers into the buffer
-        boolean extracted = extractFromProviders(world, providers);
-
-        // Try to distribute the buffer immediately
+        // Try to distribute the buffer
         boolean distributed = false;
         if (energyBuffer > 0) {
+            // First prioritize storage blocks that need energy
             boolean storedSome = distributeToStorageBlocks(world, storageBlocks);
+
+            // Then send remaining energy to receivers
             boolean sentSome = distributeBufferedEnergy(world, receivers);
+
             distributed = storedSome || sentSome;
         }
 
@@ -265,44 +268,42 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
     private boolean distributeToStorageBlocks(World world, List<BlockPos> storageBlocks) {
         if (energyBuffer <= 0 || storageBlocks.isEmpty()) return false;
 
-        // Only distribute a portion of energy to storage (prioritize receivers)
-        int energyForStorage = Math.min(energyBuffer / 2, TRANSFER_RATE);
-        if (energyForStorage <= 0) return false;
-
         boolean distributed = false;
 
-        // Find non-full storage blocks
-        List<BlockPos> availableStorage = new ArrayList<>();
+        // Find non-full storage blocks and distribute energy
         for (BlockPos storagePos : storageBlocks) {
             BlockEntity blockEntity = world.getBlockEntity(storagePos);
             if (blockEntity instanceof BaseHoneyChargeBlockEntity storage) {
-                if (storage.getStoredHoneyCharge() < storage.getMaxCharge()) {
-                    availableStorage.add(storagePos);
-                }
-            }
-        }
+                int currentCharge = storage.getStoredHoneyCharge();
+                int maxCharge = storage.getMaxCharge();
+                int spaceAvailable = maxCharge - currentCharge;
 
-        if (availableStorage.isEmpty()) return false;
+                if (spaceAvailable > 0) {
+                    // Calculate how much to send - up to TRANSFER_RATE or what's in buffer
+                    int amountToSend = Math.min(spaceAvailable, Math.min(TRANSFER_RATE, energyBuffer));
 
-        // Distribute energy evenly
-        int storageCount = availableStorage.size();
-        int energyPerStorage = energyForStorage / storageCount;
-        int remainder = energyForStorage % storageCount;
+                    if (amountToSend > 0) {
+                        // For CombCapacitor, use its receiveHoneyCharge method
+                        if (blockEntity instanceof CombCapacitorBlockEntity capacitor) {
+                            int accepted = capacitor.receiveHoneyCharge(amountToSend);
+                            if (accepted > 0) {
+                                // Safely subtract from buffer
+                                energyBuffer = Math.max(0, energyBuffer - accepted);
+                                distributed = true;
+                            }
+                        } else {
+                            // For other storage blocks
+                            int added = storage.addHoneyCharge(amountToSend);
+                            if (added > 0) {
+                                // Safely subtract from buffer
+                                energyBuffer = Math.max(0, energyBuffer - added);
+                                distributed = true;
+                            }
+                        }
 
-        for (int i = 0; i < availableStorage.size(); i++) {
-            BlockPos storagePos = availableStorage.get(i);
-            BlockEntity blockEntity = world.getBlockEntity(storagePos);
-
-            if (blockEntity instanceof BaseHoneyChargeBlockEntity storage) {
-                int amountToSend = energyPerStorage;
-                if (i == availableStorage.size() - 1) {
-                    amountToSend += remainder;
-                }
-
-                if (amountToSend > 0) {
-                    storage.addHoneyCharge(amountToSend);
-                    energyBuffer -= amountToSend;
-                    distributed = true;
+                        // If buffer is empty, stop distribution
+                        if (energyBuffer <= 0) break;
+                    }
                 }
             }
         }
@@ -349,41 +350,84 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
      */
     private boolean distributeBufferedEnergy(World world, List<BlockPos> receiverPositions) {
         if (energyBuffer <= 0) return false;
-
         if (receiverPositions.isEmpty()) return false;
 
-        // Calculate energy per receiver
-        int receiverCount = receiverPositions.size();
-        int energyPerReceiver = energyBuffer / receiverCount;
-        int remainder = energyBuffer % receiverCount;
-
         boolean distributed = false;
+        List<BlockPos> priorityReceivers = new ArrayList<>();
+        List<BlockPos> regularReceivers = new ArrayList<>();
 
-        // Distribute energy to each receiver
-        for (int i = 0; i < receiverPositions.size(); i++) {
-            BlockPos receiverPos = receiverPositions.get(i);
+        // First, prioritize HoneyChargeFurnace entities
+        for (BlockPos receiverPos : receiverPositions) {
             BlockEntity blockEntity = world.getBlockEntity(receiverPos);
             if (blockEntity == null) continue;
 
-            int amountToSend = energyPerReceiver;
-            // Add the remainder to the last receiver
-            if (i == receiverPositions.size() - 1) {
-                amountToSend += remainder;
+            // SKIP EnergyApiary completely - they should never receive energy
+            if (blockEntity instanceof EnergyApiaryBlockEntity) {
+                continue;
             }
 
+            // Prioritize furnaces over other receivers
+            if (blockEntity instanceof HoneyChargeFurnaceBlockEntity) {
+                priorityReceivers.add(receiverPos);
+            } else {
+                regularReceivers.add(receiverPos);
+            }
+        }
+
+        // Combine lists with priority receivers first
+        List<BlockPos> orderedReceivers = new ArrayList<>(priorityReceivers);
+        orderedReceivers.addAll(regularReceivers);
+
+        // Distribute energy to receivers in priority order
+        for (BlockPos receiverPos : orderedReceivers) {
+            BlockEntity blockEntity = world.getBlockEntity(receiverPos);
+            if (blockEntity == null) continue;
+
+            // Double-check we're not sending to an EnergyApiary
+            if (blockEntity instanceof EnergyApiaryBlockEntity) {
+                continue;
+            }
+
+            // Calculate how much to send
+            int amountToSend = Math.min(TRANSFER_RATE, energyBuffer);
+
             if (amountToSend > 0) {
+                int amountAccepted = 0;
+
                 if (blockEntity instanceof HoneyChargeFurnaceBlockEntity furnace) {
                     furnace.receiveHoneyCharge(amountToSend);
-                    energyBuffer -= amountToSend;
-                    distributed = true;
+                    amountAccepted = amountToSend; // Assume all was accepted for void methods
+                } else if (blockEntity instanceof HoneyChargeReceiver receiver) {
+                    amountAccepted = receiver.receiveHoneyCharge(amountToSend);
                 } else if (blockEntity instanceof BaseHoneyChargeBlockEntity honeyDest) {
-                    honeyDest.addHoneyCharge(amountToSend);
-                    energyBuffer -= amountToSend;
-                    distributed = true;
+                    // Calculate available space
+                    int currentCharge = honeyDest.getStoredHoneyCharge();
+                    int maxCharge = honeyDest.getMaxCharge();
+                    int spaceAvailable = maxCharge - currentCharge;
+
+                    // Determine how much energy can be accepted
+                    amountAccepted = Math.min(amountToSend, spaceAvailable);
+
+                    if (amountAccepted > 0) {
+                        honeyDest.addHoneyCharge(amountAccepted);
+                    }
                 } else if (blockEntity.getCachedState().getBlock() instanceof HoneyChargeReceiver receiver) {
-                    receiver.receiveHoneyCharge(amountToSend);
-                    energyBuffer -= amountToSend;
+                    try {
+                        amountAccepted = receiver.receiveHoneyCharge(amountToSend);
+                    } catch (Exception e) {
+                        // If it's void, assume all energy was accepted
+                        receiver.receiveHoneyCharge(amountToSend);
+                        amountAccepted = amountToSend;
+                    }
+                }
+
+                if (amountAccepted > 0) {
+                    // Safely subtract from buffer
+                    energyBuffer = Math.max(0, energyBuffer - amountAccepted);
                     distributed = true;
+
+                    // Stop if buffer is empty
+                    if (energyBuffer <= 0) break;
                 }
             }
         }
@@ -396,7 +440,7 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
      */
     private void findEnergyComponentsInNetwork(World world, BlockPos centerPos, Set<BlockPos> visitedBlocks,
                                                List<BlockPos> providers, List<BlockPos> receivers,
-                                               List<BlockPos> storageBlocks) {
+                                               List<BlockPos> storageBlocks, List<BlockPos> dedicatedProducers) {
         if (visitedBlocks.contains(centerPos)) return;
         visitedBlocks.add(centerPos);
 
@@ -408,35 +452,71 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
             // Skip if already visited
             if (visitedBlocks.contains(neighborPos)) continue;
 
-            // Check what type of energy component the neighbor is
-            if (neighborEntity instanceof BaseHoneyChargeBlockEntity honeyBlock) {
-                if (neighborEntity instanceof CombCapacitorBlockEntity) {
-                    // CombCapacitor is treated as a storage block
-                    storageBlocks.add(neighborPos);
-                } else if (isEnergyProvider(neighborEntity)) {
+            // Handle specific case for CombCapacitor first
+            if (neighborEntity instanceof CombCapacitorBlockEntity capacitor) {
+                // Always add to storage blocks
+                storageBlocks.add(neighborPos);
+
+                // Add as a provider if it has energy, but not as a dedicated producer
+                if (capacitor.getStoredHoneyCharge() > 0) {
                     providers.add(neighborPos);
-                } else if (isEnergyReceiver(neighborEntity)) {
-                    receivers.add(neighborPos);
-                } else {
-                    // If it's neither a dedicated provider nor receiver, it's a storage block
-                    storageBlocks.add(neighborPos);
                 }
+
+                // Add as a receiver if it has space
+                if (capacitor.getStoredHoneyCharge() < capacitor.getMaxCharge()) {
+                    receivers.add(neighborPos);
+                }
+
                 visitedBlocks.add(neighborPos);
+            }
+            // Handle EnergyApiary specifically - they are ONLY providers
+            else if (neighborEntity instanceof EnergyApiaryBlockEntity) {
+                providers.add(neighborPos);
+                dedicatedProducers.add(neighborPos); // They are a dedicated producer
+                visitedBlocks.add(neighborPos);
+                // IMPORTANT: Do NOT add to receivers list
+            }
+            // Check for HoneyChargeFurnace - it's ONLY a receiver
+            else if (neighborEntity instanceof HoneyChargeFurnaceBlockEntity) {
+                receivers.add(neighborPos);
+                visitedBlocks.add(neighborPos);
+            }
+            // Check for other energy components
+            else if (neighborEntity instanceof BaseHoneyChargeBlockEntity honeyBlock) {
+                // Only check if it's a provider or receiver if it's not already handled above
+                if (!(neighborEntity instanceof CombCapacitorBlockEntity) &&
+                        !(neighborEntity instanceof EnergyApiaryBlockEntity) &&
+                        !(neighborEntity instanceof HoneyChargeFurnaceBlockEntity)) {
+
+                    if (isEnergyProvider(neighborEntity)) {
+                        providers.add(neighborPos);
+                        dedicatedProducers.add(neighborPos);
+                    }
+                    if (isEnergyReceiver(neighborEntity)) {
+                        receivers.add(neighborPos);
+                    }
+                    // Add to storage if it's neither a dedicated provider nor receiver
+                    if (!isEnergyProvider(neighborEntity) && !isEnergyReceiver(neighborEntity)) {
+                        storageBlocks.add(neighborPos);
+                    }
+                    visitedBlocks.add(neighborPos);
+                }
             }
             // Check for block-based providers and receivers
             else if (neighborState.getBlock() instanceof HoneyChargeProvider) {
                 providers.add(neighborPos);
-                visitedBlocks.add(neighborPos);
-            } else if (neighborEntity instanceof HoneyChargeFurnaceBlockEntity) {
-                receivers.add(neighborPos);
+                dedicatedProducers.add(neighborPos);
                 visitedBlocks.add(neighborPos);
             } else if (neighborState.getBlock() instanceof HoneyChargeReceiver) {
-                receivers.add(neighborPos);
+                // Don't add as receiver if it's an EnergyApiary
+                if (!(neighborEntity instanceof EnergyApiaryBlockEntity)) {
+                    receivers.add(neighborPos);
+                }
                 visitedBlocks.add(neighborPos);
             }
             // If it's another conduit, traverse through it
             else if (neighborEntity instanceof HoneyChargeConduitBlockEntity) {
-                findEnergyComponentsInNetwork(world, neighborPos, visitedBlocks, providers, receivers, storageBlocks);
+                findEnergyComponentsInNetwork(world, neighborPos, visitedBlocks, providers, receivers, storageBlocks, dedicatedProducers);
             }
         }
     }
@@ -445,7 +525,7 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
      * Checks if the block entity is an energy provider
      */
     private boolean isEnergyProvider(BlockEntity entity) {
-        // EnergyApiary is a dedicated provider
+        // Only EnergyApiary is a dedicated provider (not CombCapacitor)
         return entity instanceof EnergyApiaryBlockEntity;
     }
 
@@ -453,9 +533,10 @@ public class HoneyChargeConduitBlockEntity extends BlockEntity {
      * Checks if the block entity is an energy receiver
      */
     private boolean isEnergyReceiver(BlockEntity entity) {
-        // CombCapacitor is no longer considered a dedicated receiver
-        // It will be handled as a storage block that can both receive and provide energy
-        return entity instanceof HoneyChargeFurnaceBlockEntity;
+        // Only HoneyChargeFurnace is a dedicated receiver (not CombCapacitor)
+        // IMPORTANT: Exclude EnergyApiary from being a receiver
+        return entity instanceof HoneyChargeFurnaceBlockEntity &&
+                !(entity instanceof EnergyApiaryBlockEntity);
     }
 
     /**

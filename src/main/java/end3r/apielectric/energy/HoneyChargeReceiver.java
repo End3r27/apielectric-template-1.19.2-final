@@ -8,6 +8,7 @@ public interface HoneyChargeReceiver {
      * Called when this receiver should receive honey charge energy
      *
      * @param amount The amount of honey charge to receive
+     * @return
      */
-    void receiveHoneyCharge(int amount);
+    int receiveHoneyCharge(int amount);
 }

@@ -40,8 +40,11 @@ public class BaseHoneyChargeBlockEntity extends BlockEntity {
     }
 
     // Add honey charge to the block entity, respecting the max charge
-    public void addHoneyCharge(int amount) {
+// Returns the amount of energy actually added
+    public int addHoneyCharge(int amount) {
+        int previousCharge = this.storedHoneyCharge;
         this.storedHoneyCharge = Math.min(storedHoneyCharge + amount, maxHoneyCharge);
+        return this.storedHoneyCharge - previousCharge; // Return how much was actually added
     }
 
     // Consume honey charge from the block entity
